@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import com.gluonhq.charm.glisten.control.Icon?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.shape.Arc?>
+
+<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/20.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="Control">
+   <children>
+      <Button layoutX="38.0" layoutY="187.0" mnemonicParsing="false" text="L" />
+      <Button layoutX="466.0" layoutY="161.0" mnemonicParsing="false" text="R" />
+      <Button layoutX="274.0" layoutY="37.0" mnemonicParsing="false" onAction="#UP" text="UP" />
+      <Button layoutX="287.0" layoutY="341.0" mnemonicParsing="false" text="D" />
+      <Arc fill="#ff1f1f" layoutX="315.0" layoutY="200.0" length="270.0" radiusX="100.0" radiusY="100.0" startAngle="45.0" stroke="BLACK" strokeType="INSIDE" type="ROUND" />
+      <Icon content="HELP_OUTLINE" layoutX="128.0" layoutY="83.0" />
+   </children>
+</AnchorPane>
