@@ -1,9 +1,25 @@
-public class Main {
-    //testing
-    //base code..
+import javafx.application.Application;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
+import javafx.scene.image.Image;
+import javafx.stage.Stage;
+
+public class Main extends Application{
+
     public static void main(String[] args) {
         System.out.println("Hello world");
-        System.out.println("RAWR XD");
-        System.out.println("Sam says Hello world");
+        launch(args);
+    }
+
+    @Override
+    public void start(Stage stage) throws Exception {
+        Parent root = FXMLLoader.load(getClass().getResource("Main.fxml"));
+
+        stage.setTitle("Deny and Conquer: Main Menu");
+        stage.setScene(new Scene((root)));
+        Image icon = new Image("garfield_deny.jpg");
+        stage.getIcons().add(icon);
+        stage.show();
     }
 }
