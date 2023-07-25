@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.text.Font?>
+
+<AnchorPane prefHeight="400.0" prefWidth="600.0" style="-fx-background-color: skyblue;"
+            xmlns="http://javafx.com/javafx/20.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="SceneController">
+   <Label layoutX="194.0" layoutY="36.0" style="-fx-background-color: lightyellow;" text="Game Results">
+      <font>
+         <Font name="Georgia Bold" size="30.0"/>
+      </font>
+   </Label>
+   <Label alignment="CENTER" contentDisplay="CENTER" layoutX="125.0" layoutY="139.0"
+          text="First Place: Blue, 20 blocks conquered">
+      <font>
+         <Font name="Georgia" size="20.0"/>
+      </font>
+   </Label>
+   <Label alignment="CENTER" layoutX="124.0" layoutY="180.0" text="Second Place: Green, 18 blocks conquered">
+      <font>
+         <Font name="Georgia" size="20.0"/>
+      </font>
+   </Label>
+   <Label alignment="CENTER" layoutX="124.0" layoutY="225.0" text="Third Place: Red, 15 blocks conquered">
+      <font>
+         <Font name="Georgia" size="20.0"/>
+      </font>
+   </Label>
+   <Label alignment="CENTER" layoutX="124.0" layoutY="267.0" text="Fourth Place: Yellow, 11 blocks conquered">
+      <font>
+         <Font name="Georgia" size="20.0"/>
+      </font>
+   </Label>
+   <Button layoutX="273.0" layoutY="341.0" mnemonicParsing="false" onAction="#switchToMainPage" text="Close">
+      <font>
+         <Font name="Georgia" size="14.0"/>
+      </font>
+   </Button>
+</AnchorPane>
