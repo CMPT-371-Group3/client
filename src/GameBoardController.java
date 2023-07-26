@@ -7,6 +7,8 @@ import javafx.scene.Scene;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.image.Image;
+import javafx.scene.image.PixelReader;
+import javafx.scene.image.WritableImage;
 import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 import javafx.scene.input.MouseEvent;
@@ -57,9 +59,40 @@ public class GameBoardController {
         stage.show();
     }
 
+    public double calculatePercentageDrawn(Canvas canvas) {
+        int height = (int) canvas.getWidth();
+        int width = (int) canvas.getHeight();
+
+        WritableImage writableImage = new WritableImage(width, height);
+        canvas.snapshot(null, writableImage);
+        PixelReader pixelReader = writableImage.getPixelReader();
+
+        int pixelsDrawn = 0;
+        for (int x=0; x<width; x++) {
+            for (int y=0; y<height; y++) {
+                Color color = pixelReader.getColor(x,y);
+                if (color.equals(Color.BLACK)) {
+                    pixelsDrawn++;
+                }
+            }
+        }
+        int totalPixels = width * height;
+        double percentage = (double) pixelsDrawn/totalPixels * 100;
+        return percentage;
+    }
+
     public void releasedDrag(MouseEvent e) {
         Canvas currentCanvas = (Canvas) e.getSource();
         GraphicsContext g = currentCanvas.getGraphicsContext2D();
-        g.clearRect(0, 0, currentCanvas.getWidth(), currentCanvas.getHeight());
+        double percentageFilled = calculatePercentageDrawn(currentCanvas);
+        if (percentageFilled < 50) {
+            g.clearRect(0, 0, currentCanvas.getWidth(), currentCanvas.getHeight());
+        } else {
+            // will need to send a message to server saying this user has taken ownership
+            // of this cell
+            System.out.println("User drew more than 50%!");
+            g.setFill(Color.BLACK); // we can set this to the user's color later, for testing purposes it's black
+            g.fillRect(0,0, currentCanvas.getWidth(), currentCanvas.getHeight());
+        }
     }
 }
