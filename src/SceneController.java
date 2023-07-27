@@ -11,31 +11,31 @@ import javafx.scene.image.Image;
 import javafx.scene.input.MouseEvent;
 import javafx.stage.Stage;
 import javafx.scene.paint.*;
+import javafx.scene.control.Label;
 
 import java.io.IOException;
+import java.net.Inet4Address;
+import java.net.UnknownHostException;
 
 public class SceneController {
     @FXML
     private Stage stage;
     private Scene scene;
     private Parent root;
-//    private Canvas canvas;
+    @FXML
+    private Label ipLabel;
 
-    //adding a listener to be able to draw on the canvas
-    //called automatically by the fxml loader
-//    public void initialize() {
-//        GraphicsContext g = canvas.getGraphicsContext2D();
-//        canvas.setHeight(20);
-
-//        canvas.setOnMouseDragged(e -> {
-//            double size = 5.0;
-//            double x = e.getX() - size / 2;
-//            double y = e.getY() - size / 2;
-//
-//            g.setFill(Color.RED);
-//            g.fillRect(x, y, size, size);
-//        });
-//    }
+    public void initialize() {
+        if(ipLabel != null){ //code for the waiting screen and not the main screen
+            try {
+                String ipAddress = Inet4Address.getLocalHost().getHostAddress();
+                ipLabel.setText("Your Host IP Address: " + ipAddress);
+            } catch (UnknownHostException e) {
+                e.printStackTrace();
+                ipLabel.setText("Unable to fetch IP address");
+            }
+        }
+    }
 
     public void switchToMainPage(ActionEvent e) throws IOException {
         root = FXMLLoader.load(getClass().getResource("Scenes/Main.fxml"));
@@ -54,6 +54,15 @@ public class SceneController {
         Image icon = new Image("Scenes/garfield_deny.jpg");
         stage.getIcons().add(icon);
         stage.setTitle("Deny and Conquer: Waiting Room");
+        stage.setScene(scene);
+        stage.show();
+    }
+
+    public void switchToJoinGame(ActionEvent e) throws  IOException {
+        root = FXMLLoader.load(getClass().getResource("Scenes/JoinGame.fxml"));
+        stage = (Stage)((Node)e.getSource()).getScene().getWindow();
+        scene = new Scene(root);
+        stage.setTitle("Join Game");
         stage.setScene(scene);
         stage.show();
     }

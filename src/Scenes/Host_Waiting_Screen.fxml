@@ -21,7 +21,7 @@
    <ImageView fitHeight="180.0" fitWidth="306.0" layoutX="165.0" layoutY="88.0" pickOnBounds="true" preserveRatio="true">
       <Image url="@lonely_waiting_meme.gif" />
    </ImageView>
-   <Label layoutX="207.0" layoutY="287.0" text="Host IP Address: 192.68.164.2">
+   <Label fx:id="ipLabel" layoutX="207.0" layoutY="287.0" text="Host IP Address: 192.68.164.2">
       <font>
          <Font name="Georgia" size="14.0" />
       </font>
