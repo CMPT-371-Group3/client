@@ -24,12 +24,12 @@ public class GameBoardController {
     private Stage stage;
     private Scene scene;
 
-    private Canvas[][] canvases = new Canvas[2][2];
+    private Canvas[][] canvases = new Canvas[8][8];
     private GraphicsContext graphicsContext;
 
     public void initialize() {
-        for(int row = 0; row <2; row++){
-            for(int col = 0; col < 2; col++) {
+        for(int row = 0; row <8; row++){
+            for(int col = 0; col < 8; col++) {
                 canvases[row][col] = new Canvas();
                 canvases[row][col].setOnMouseDragged(this::handleMouseDragged);
             }
@@ -40,11 +40,11 @@ public class GameBoardController {
     private void handleMouseDragged(MouseEvent mouseEvent) {
         Canvas currentCanvas = (Canvas) mouseEvent.getSource();
         GraphicsContext g = currentCanvas.getGraphicsContext2D();
-        double size = 2.5;
+        double size = 3;
         double x = mouseEvent.getX() - size/2;
         double y = mouseEvent.getY() - size/2;
 
-        g.setFill(Color.BLACK);
+        g.setFill(Color.LIMEGREEN);
         g.fillRect(x, y, size, size);
 
     }
@@ -63,21 +63,30 @@ public class GameBoardController {
         int height = (int) canvas.getWidth();
         int width = (int) canvas.getHeight();
 
-        WritableImage writableImage = new WritableImage(width, height);
+        WritableImage writableImage = new WritableImage(height, width);
         canvas.snapshot(null, writableImage);
-        PixelReader pixelReader = writableImage.getPixelReader();
 
-        int pixelsDrawn = 0;
-        for (int x=0; x<width; x++) {
-            for (int y=0; y<height; y++) {
-                Color color = pixelReader.getColor(x,y);
-                if (color.equals(Color.BLACK)) {
+        PixelReader pixelReader = writableImage.getPixelReader();
+        double writableHeight = writableImage.getHeight();
+        double writableWidth = writableImage.getWidth();
+
+        double pixelsDrawn = 0;
+        for (int x=0; x<height; x++) {
+            for (int y=0; y<width; y++) {
+                Color color = pixelReader.getColor(x, y);
+//                System.out.println(x + " " + y + " Color = " + color.toString());
+                if (color.equals(Color.LIMEGREEN)) {
                     pixelsDrawn++;
+//                    System.out.println(x + " " + y + " Color = " + color.toString());
                 }
             }
         }
-        int totalPixels = width * height;
-        double percentage = (double) pixelsDrawn/totalPixels * 100;
+        double totalPixels = writableHeight * writableWidth;
+//        System.out.println("Pixels drawn = " + pixelsDrawn + "   total pixels = " + totalPixels );
+//        System.out.println("Width = " + width + "   Height " + height );
+//        System.out.println("Width = " + writableWidth + "   Height " + writableHeight );
+        double percentage = (double) ((pixelsDrawn/totalPixels) * 100);
+//        System.out.println(percentage);
         return percentage;
     }
 
@@ -91,7 +100,7 @@ public class GameBoardController {
             // will need to send a message to server saying this user has taken ownership
             // of this cell
             System.out.println("User drew more than 50%!");
-            g.setFill(Color.BLACK); // we can set this to the user's color later, for testing purposes it's black
+            g.setFill(Color.CORAL); // we can set this to the user's color later, for testing purposes it's black
             g.fillRect(0,0, currentCanvas.getWidth(), currentCanvas.getHeight());
         }
     }

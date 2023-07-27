@@ -7,7 +7,9 @@ import javafx.scene.Scene;
 import javafx.scene.image.Image;
 import javafx.stage.Stage;
 
-import java.awt.*;
+//import java.awt.*;
+//join game
+import javafx.scene.control.TextField;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.net.Socket;
@@ -35,9 +37,9 @@ public class JoinGameController {
     public void switchToHostWaiting(ActionEvent e) throws IOException {
 
         //HAVE TO DO MORE WORK HERE TO CHECK - IF CAN FIND THE CONNECTION
-        String ipAddress = inputText.getText();
-
-        makeConnection(ipAddress);
+//        String ipAddress = inputText.getText();
+//
+//        makeConnection(ipAddress);
 
 
         root = FXMLLoader.load(getClass().getResource("Scenes/Host_Waiting_Screen.fxml"));
