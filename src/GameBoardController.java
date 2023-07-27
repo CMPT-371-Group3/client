@@ -74,7 +74,6 @@ public class GameBoardController {
         for (int x=0; x<height; x++) {
             for (int y=0; y<width; y++) {
                 Color color = pixelReader.getColor(x, y);
-//                System.out.println(x + " " + y + " Color = " + color.toString());
                 if (color.equals(Color.LIMEGREEN)) {
                     pixelsDrawn++;
 //                    System.out.println(x + " " + y + " Color = " + color.toString());
