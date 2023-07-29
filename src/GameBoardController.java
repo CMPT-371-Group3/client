@@ -14,18 +14,14 @@ import javafx.stage.Stage;
 import javafx.scene.input.MouseEvent;
 
 import java.io.IOException;
-import java.util.ArrayList;
 
 public class GameBoardController {
-//    private ArrayList<Cell> listOfCells = new ArrayList<>();
     @FXML
-//    private Canvas canvas;
     private Parent root;
     private Stage stage;
     private Scene scene;
 
     private Canvas[][] canvases = new Canvas[8][8];
-    private GraphicsContext graphicsContext;
 
     public void initialize() {
         for(int row = 0; row <8; row++){
@@ -40,9 +36,9 @@ public class GameBoardController {
     private void handleMouseDragged(MouseEvent mouseEvent) {
         Canvas currentCanvas = (Canvas) mouseEvent.getSource();
         GraphicsContext g = currentCanvas.getGraphicsContext2D();
-        double size = 3;
-        double x = mouseEvent.getX() - size/2;
-        double y = mouseEvent.getY() - size/2;
+        double size = 1;
+        double x = mouseEvent.getX() - size;
+        double y = mouseEvent.getY() - size;
 
         g.setFill(Color.LIMEGREEN);
         g.fillRect(x, y, size, size);
@@ -60,32 +56,25 @@ public class GameBoardController {
     }
 
     public double calculatePercentageDrawn(Canvas canvas) {
-        int height = (int) canvas.getWidth();
-        int width = (int) canvas.getHeight();
-
-        WritableImage writableImage = new WritableImage(height, width);
-        canvas.snapshot(null, writableImage);
-
-        PixelReader pixelReader = writableImage.getPixelReader();
-        double writableHeight = writableImage.getHeight();
-        double writableWidth = writableImage.getWidth();
-
+        int width = (int) canvas.getWidth();
+        int height = (int) canvas.getHeight();
         double pixelsDrawn = 0;
-        for (int x=0; x<height; x++) {
-            for (int y=0; y<width; y++) {
+
+        WritableImage writableImage = new WritableImage(width, height);
+        canvas.snapshot(null, writableImage);
+        PixelReader pixelReader = writableImage.getPixelReader();
+
+        for (int x=0; x<width; x++) {
+            for (int y=0; y<height; y++) {
                 Color color = pixelReader.getColor(x, y);
                 if (color.equals(Color.LIMEGREEN)) {
                     pixelsDrawn++;
-//                    System.out.println(x + " " + y + " Color = " + color.toString());
                 }
             }
         }
-        double totalPixels = writableHeight * writableWidth;
-//        System.out.println("Pixels drawn = " + pixelsDrawn + "   total pixels = " + totalPixels );
-//        System.out.println("Width = " + width + "   Height " + height );
-//        System.out.println("Width = " + writableWidth + "   Height " + writableHeight );
+        double totalPixels = height * width;
         double percentage = (double) ((pixelsDrawn/totalPixels) * 100);
-//        System.out.println(percentage);
+        System.out.println(percentage);
         return percentage;
     }
 
