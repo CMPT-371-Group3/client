@@ -41,9 +41,10 @@ public class GameBoardController {
         String[] coordinates = currentCanvas.getId().split(",");
         int row = Integer.parseInt(coordinates[0]);
         int col = Integer.parseInt(coordinates[1]);
-        // construct a LOCK/x,y String
+        // construct a LOCK/x,y String to send to server
         String lockMsg = "LOCK/" + row + "," + col;
-        Client.getInstance().sendMessage(lockMsg);
+//        Client.getInstance().sendMessage(lockMsg);
+//        System.out.println(lockMsg);
 
         GraphicsContext g = currentCanvas.getGraphicsContext2D();
         double size = 2;
@@ -80,10 +81,14 @@ public class GameBoardController {
         Canvas currentCanvas = (Canvas) e.getSource();
         GraphicsContext g = currentCanvas.getGraphicsContext2D();
         double percentageFilled = calculatePercentageDrawn(currentCanvas);
+
         String[] coordinates = currentCanvas.getId().split(",");
         int row = Integer.parseInt(coordinates[0]);
         int col = Integer.parseInt(coordinates[1]);
         if (percentageFilled < 50) {
+            String unlockMsg = "UNLOCK/" + row + "," + col;
+//            Client.getInstance().sendMessage(unlockMsg);
+            System.out.println(unlockMsg);
             g.clearRect(0, 0, currentCanvas.getWidth(), currentCanvas.getHeight());
         } else {
             g.setFill(Color.CORAL); // we can set this to the user's color later, for testing purposes it's black
@@ -91,8 +96,7 @@ public class GameBoardController {
             cells[row][col].setTakenOver(true);
             // send message to server after constructing a string "FILL/X,Y"
             String fillMsg = "FILL/" + row + "," + col;
-            Client.getInstance().sendMessage(fillMsg);
-//            Client c = Client.getInstance();
+//            Client.getInstance().sendMessage(fillMsg);
             System.out.println(fillMsg);
         }
     }
