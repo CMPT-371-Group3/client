@@ -4,6 +4,7 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.control.Button;
 import javafx.scene.image.Image;
 import javafx.stage.Stage;
 
@@ -18,6 +19,10 @@ public class JoinGameController {
 
     @FXML
     private TextField inputText;
+    @FXML
+    private TextField portInput;
+    @FXML
+    private Button joinBtn;
     private Stage stage;
     private Scene scene;
     private Parent root;
@@ -34,12 +39,17 @@ public class JoinGameController {
 
 //    public void joinGameBTN(ActionEvent e)
 
-    public void switchToHostWaiting(ActionEvent e) throws IOException {
+    public void joinBtnClicked(ActionEvent e) throws IOException {
 
         //HAVE TO DO MORE WORK HERE TO CHECK - IF CAN FIND THE CONNECTION
 //        String ipAddress = inputText.getText();
 //
 //        makeConnection(ipAddress);
+
+        String ip = inputText.getText();
+        String portNumber = portInput.getText();
+
+
 
 
         root = FXMLLoader.load(getClass().getResource("Scenes/Host_Waiting_Screen.fxml"));

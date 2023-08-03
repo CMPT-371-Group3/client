@@ -13,7 +13,7 @@
          <Font name="Georgia Bold" size="26.0" />
       </font>
    </Label>
-   <Button layoutX="265.0" layoutY="350.0" mnemonicParsing="false" onAction="#switchToMainPage" text="Cancel">
+   <Button layoutX="11.0" layoutY="357.0" mnemonicParsing="false" onAction="#switchToMainPage" text="Cancel">
       <font>
          <Font name="Georgia" size="16.0" />
       </font>
@@ -31,7 +31,7 @@
          <Font name="Georgia" size="14.0" />
       </font>
    </Label>
-   <Button layoutX="497.0" layoutY="350.0" mnemonicParsing="false" onAction="#switchToEndPage" prefHeight="30.0" prefWidth="62.0" text="Exit">
+   <Button fx:id="readyBtn" layoutX="241.0" layoutY="348.0" mnemonicParsing="false" onAction="#readyButtonPressed" prefHeight="24.0" prefWidth="129.0" text="Ready">
       <font>
          <Font name="Georgia" size="16.0" />
       </font>
