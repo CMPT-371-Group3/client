@@ -4,19 +4,40 @@ import java.util.Scanner;
 
 public class Client {
 
+    private Socket socket;
+    private OutputStream os;
+    private InputStream is;
+    private PrintWriter output;
+    private BufferedReader input;
+
     public static Client object;
     private Client() {
         try {
-            socket = new Socket("localhost", 6000);
-            os = socket.getOutputStream();
-            is = socket.getInputStream();
-            output = new PrintWriter(os, true);
-            input = new BufferedReader(new InputStreamReader(is));
+            this.socket = new Socket("localhost", 6000);
+            this.os = socket.getOutputStream();
+            this.is = socket.getInputStream();
+            this.output = new PrintWriter(os, true);
+            this.input = new BufferedReader(new InputStreamReader(is));
         } catch (IOException e) {
             e.printStackTrace();
         }
         System.out.println("Instance created");
     }
+
+//    public void sendMessage(String msg) {
+//        System.out.println("Send message method initiated");
+//    }
+
+    public void sendMessage(String payload) {
+        try {
+            // Write to the server
+            this.output.println(payload);
+        } catch (Exception e) {
+            System.out.println("Error: " + e.getMessage());
+        }
+    }
+
+
 
     public static Client getInstance() {
         if (object == null) {
@@ -31,11 +52,11 @@ public class Client {
 
     private String ipAddress;
     private int portNumber;
-    private Socket socket;
-    private OutputStream os;
-    private InputStream is;
-    private PrintWriter output;
-    private BufferedReader input;
+//    private Socket socket;
+//    private OutputStream os;
+//    private InputStream is;
+//    private PrintWriter output;
+//    private BufferedReader input;
     private String addressWithPort;
     private Scanner sc;
     private Boolean msgSent;
@@ -96,14 +117,7 @@ public class Client {
 //        }
 //    }
 
-    public void sendMessage(String payload) {
-        try {
-            // Write to the server
-            this.output.println(payload);
-        } catch (Exception e) {
-            System.out.println("Error: " + e.getMessage());
-        }
-    }
+
 
     public PrintWriter getOutput() {
         return this.output;
