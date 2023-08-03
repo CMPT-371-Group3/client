@@ -7,6 +7,7 @@ import javafx.scene.Scene;
 import javafx.scene.*;
 import javafx.scene.canvas.*;
 //import javafx.scene.canvas.GraphicsContext;
+import javafx.scene.control.Button;
 import javafx.scene.image.Image;
 import javafx.scene.input.MouseEvent;
 import javafx.stage.Stage;
@@ -24,6 +25,8 @@ public class SceneController {
     private Parent root;
     @FXML
     private Label ipLabel;
+    @FXML
+    private Button readyBtn;
 
     public void initialize() {
         if(ipLabel != null){ //code for the waiting screen and not the main screen
@@ -75,6 +78,11 @@ public class SceneController {
         stage.getIcons().add(icon);
         stage.setScene(scene);
         stage.show();
+    }
+
+    public void readyButtonPressed(ActionEvent e) throws IOException {
+        readyBtn.setDisable(true);
+        readyBtn.setText("Waiting");
     }
 
     public void switchToGameBoard(ActionEvent e) throws IOException {

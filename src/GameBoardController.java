@@ -73,7 +73,7 @@ public class GameBoardController {
         }
         double totalPixels = height * width;
         double percentage = (double) ((pixelsDrawn/totalPixels) * 100);
-        System.out.println(percentage);
+//        System.out.println(percentage);
         return percentage;
     }
 
