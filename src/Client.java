@@ -9,6 +9,7 @@ public class Client {
     private InputStream is;
     private PrintWriter output;
     private BufferedReader input;
+//    private GameBoardController board;
 
     public static Client object;
     private Client() {
@@ -18,26 +19,54 @@ public class Client {
             this.is = socket.getInputStream();
             this.output = new PrintWriter(os, true);
             this.input = new BufferedReader(new InputStreamReader(is));
+
         } catch (IOException e) {
             e.printStackTrace();
         }
-        System.out.println("Instance created");
     }
-
-//    public void sendMessage(String msg) {
-//        System.out.println("Send message method initiated");
-//    }
 
     public void sendMessage(String payload) {
         try {
             // Write to the server
-            this.output.println(payload);
+            this.output.println(payload); //191.191
+            this.output.flush();
         } catch (Exception e) {
             System.out.println("Error: " + e.getMessage());
         }
     }
 
+    public void threadedListening(){
+        new Thread(()-> {
+            try {
+//                System.out.println("Thread running_____");
+                String serverMessage;
+                while((serverMessage = input.readLine()) != null){
+//                    System.out.println("Thread in while loop*******");
+                    System.out.println(serverMessage);
+                    String[] tokens = serverMessage.split("/");
 
+                    switch (tokens[0]) {
+                        case "EXIT":
+                            return;
+                        case "LOCK":
+                            String[] coordinates = tokens[1].split(",");
+                            int row = Integer.parseInt(coordinates[0]);
+                            int col = Integer.parseInt(coordinates[1]);
+                            System.out.println("LOCK message from server for " + row + " " + col);
+                            GameBoardController.getInstance().lockCell(row, col);
+
+                        case "UNLOCK":
+                        case "MESSAGE":
+                        case "FILL":
+
+
+                    }
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }).start();
+    }
 
     public static Client getInstance() {
         if (object == null) {
