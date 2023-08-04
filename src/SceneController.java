@@ -29,6 +29,8 @@ public class SceneController {
     private Button readyBtn;
 
     public void initialize() {
+        Client.getInstance().threadedListening();
+
         if(ipLabel != null){ //code for the waiting screen and not the main screen
             try {
                 String ipAddress = Inet4Address.getLocalHost().getHostAddress();
@@ -86,6 +88,7 @@ public class SceneController {
     }
 
     public void switchToGameBoard(ActionEvent e) throws IOException {
+        //stop listening
         root = FXMLLoader.load(getClass().getResource("Scenes/Game_Board.fxml"));
         stage = (Stage)((Node)e.getSource()).getScene().getWindow();
         scene = new Scene(root);

@@ -49,7 +49,8 @@ public class JoinGameController {
         String ip = inputText.getText();
         String portNumber = portInput.getText();
 
-
+        Client.getInstance().sendMessage("JOIN");
+//        Client.getInstance().
 
 
         root = FXMLLoader.load(getClass().getResource("Scenes/Host_Waiting_Screen.fxml"));

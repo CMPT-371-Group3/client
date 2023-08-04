@@ -15,25 +15,47 @@ import javafx.scene.input.MouseEvent;
 
 import java.io.IOException;
 
-public class GameBoardController {
+public class GameBoardController{
     @FXML
     private Parent root;
     private Stage stage;
     private Scene scene;
 
 //    private Canvas[][] canvases = new Canvas[8][8];
-    private final Cell[][] cells = new Cell[8][8];
+    public static volatile Cell[][] cells = new Cell[8][8];
+    public static GameBoardController object;
 
+    public GameBoardController() {
+    }
+
+    public static GameBoardController getInstance() {
+        if (object == null) {
+            synchronized (Client.class) {
+                if (object == null) {
+                    object = new GameBoardController();
+                }
+            }
+        }
+        return object;
+    }
     public void initialize() {
+        System.out.println("IN the initialize function");
         for (int row=0; row<8; row++) {
             for (int col=0; col<8; col++) {
                 Canvas c = new Canvas();
-                Cell cell = new Cell(c, Color.TRANSPARENT, false, row, col);
+                Cell cell = new Cell(c, Color.TRANSPARENT, false, row, col, false);
                 cells[row][col] = cell;
                 cells[row][col].getCanvas().setOnMouseDragged(this::handleMouseDragged);
             }
         }
+//        Client.getInstance().threadedListening();
     }
+
+    public void lockCell(int row,int col) {
+        cells[row][col].setLocked(true);
+        System.out.println("lockCell method called-  " + row + " " + col + " is locked: " + cells[row][col].isLocked());
+    }
+
 
     @FXML
     private void handleMouseDragged(MouseEvent mouseEvent) {
@@ -41,17 +63,23 @@ public class GameBoardController {
         String[] coordinates = currentCanvas.getId().split(",");
         int row = Integer.parseInt(coordinates[0]);
         int col = Integer.parseInt(coordinates[1]);
-        // construct a LOCK/x,y String to send to server
-        String lockMsg = "LOCK/" + row + "," + col;
-//        Client.getInstance().sendMessage(lockMsg);
-//        System.out.println(lockMsg);
 
-        GraphicsContext g = currentCanvas.getGraphicsContext2D();
-        double size = 2;
-        double x = mouseEvent.getX() - size;
-        double y = mouseEvent.getY() - size;
-        g.setFill(Color.LIMEGREEN);
-        g.fillRect(x, y, size, size);
+        Cell currentCell = cells[row][col];
+        if (!currentCell.isTakenOver()) {
+            // construct a LOCK/x,y String to send to server
+            if (!currentCell.isLocked()) {
+                currentCell.setLocked(true);
+                String lockMsg = "LOCK/" + row + "," + col;
+                Client.getInstance().sendMessage(lockMsg);
+            }
+
+            GraphicsContext g = currentCanvas.getGraphicsContext2D();
+            double size = 2;
+            double x = mouseEvent.getX() - size;
+            double y = mouseEvent.getY() - size;
+            g.setFill(Color.LIMEGREEN);
+            g.fillRect(x, y, size, size);
+        }
     }
 
     public double calculatePercentageDrawn(Canvas canvas) {
@@ -86,9 +114,9 @@ public class GameBoardController {
         int row = Integer.parseInt(coordinates[0]);
         int col = Integer.parseInt(coordinates[1]);
         if (percentageFilled < 50) {
-            String unlockMsg = "UNLOCK/" + row + "," + col;
+//            String unlockMsg = "UNLOCK/" + row + "," + col;
 //            Client.getInstance().sendMessage(unlockMsg);
-            System.out.println(unlockMsg);
+//            System.out.println(unlockMsg);
             g.clearRect(0, 0, currentCanvas.getWidth(), currentCanvas.getHeight());
         } else {
             g.setFill(Color.CORAL); // we can set this to the user's color later, for testing purposes it's black

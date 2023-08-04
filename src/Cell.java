@@ -7,13 +7,15 @@ public class Cell {
     private boolean isTakenOver;
     private final int x;
     private final int y;
+    private boolean isLocked;
 
-    public Cell(Canvas canvas, Color color, boolean isTakenOver, int x, int y) {
+    public Cell(Canvas canvas, Color color, boolean isTakenOver, int x, int y, boolean isLocked) {
         this.canvas = canvas;
         this.color = color;
         this.isTakenOver = isTakenOver;
         this.x = x;
         this.y = y;
+        this.isLocked = false;
     }
 
     public void setCanvas(Canvas canvas) {
@@ -46,5 +48,13 @@ public class Cell {
 
     public int getY() {
         return y;
+    }
+
+    public void setLocked(boolean locked) {
+        isLocked = locked;
+    }
+
+    public boolean isLocked() {
+        return isLocked;
     }
 }
