@@ -21,7 +21,6 @@ public class GameBoardController{
     private Stage stage;
     private Scene scene;
 
-//    private Canvas[][] canvases = new Canvas[8][8];
     public static volatile Cell[][] cells = new Cell[8][8];
     public static GameBoardController object;
 
@@ -40,45 +39,56 @@ public class GameBoardController{
     }
     public void initialize() {
         System.out.println("IN the initialize function");
-        for (int row=0; row<8; row++) {
-            for (int col=0; col<8; col++) {
+        for (int x=0; x<8; x++) {
+            for (int y=0; y<8; y++) {
                 Canvas c = new Canvas();
-                Cell cell = new Cell(c, Color.TRANSPARENT, false, row, col, false);
-                cells[row][col] = cell;
-                cells[row][col].getCanvas().setOnMouseDragged(this::handleMouseDragged);
+                Cell cell = new Cell(c, Color.TRANSPARENT, false, x, y, false);
+                cells[x][y] = cell;
+                cells[x][y].getCanvas().setOnMouseDragged(this::handleMouseDragged);
             }
         }
-//        Client.getInstance().threadedListening();
+    }
+    // **********************************************************************
+    // these functions are to handle broadcast messages that come in from the server
+    // i.e. when OTHER players lock, unlock, fill a cell
+    public void lockCell(int x, int y) {
+        cells[x][y].setLocked(true);
+        System.out.println("lockCell method called-  " + x + " " + y + " is locked: " + cells[x][y].isLocked());
     }
 
-    public void lockCell(int row,int col) {
-        cells[row][col].setLocked(true);
-        System.out.println("lockCell method called-  " + row + " " + col + " is locked: " + cells[row][col].isLocked());
+    public void unlockCell(int x, int y) {
+        cells[x][y].setLocked(false);
+        System.out.println("unlocked " + x + " " + y + " is locked: " + cells[x][y].isLocked());
     }
+
+    public void fillCell(int x, int y) {
+        cells[x][y].setTakenOver(true);
+        System.out.println("filled " + x + " " + y + " is filled: " + cells[x][y].isTakenOver());
+    }
+    // ***********************************************************************
 
 
     @FXML
     private void handleMouseDragged(MouseEvent mouseEvent) {
         Canvas currentCanvas = (Canvas) mouseEvent.getSource();
         String[] coordinates = currentCanvas.getId().split(",");
-        int row = Integer.parseInt(coordinates[0]);
-        int col = Integer.parseInt(coordinates[1]);
+        int x = Integer.parseInt(coordinates[0]);
+        int y = Integer.parseInt(coordinates[1]);
 
-        Cell currentCell = cells[row][col];
+        Cell currentCell = cells[x][y];
         if (!currentCell.isTakenOver()) {
-            // construct a LOCK/x,y String to send to server
             if (!currentCell.isLocked()) {
                 currentCell.setLocked(true);
-                String lockMsg = "LOCK/" + row + "," + col;
+                String lockMsg = "LOCK/" + x + "," + y;
                 Client.getInstance().sendMessage(lockMsg);
             }
-
             GraphicsContext g = currentCanvas.getGraphicsContext2D();
             double size = 2;
-            double x = mouseEvent.getX() - size;
-            double y = mouseEvent.getY() - size;
+            double xCoord = mouseEvent.getX() - size;
+            double yCoord = mouseEvent.getY() - size;
             g.setFill(Color.LIMEGREEN);
-            g.fillRect(x, y, size, size);
+//            g.setFill(Client.getInstance().getColor());
+            g.fillRect(xCoord, yCoord, size, size);
         }
     }
 
@@ -111,21 +121,19 @@ public class GameBoardController{
         double percentageFilled = calculatePercentageDrawn(currentCanvas);
 
         String[] coordinates = currentCanvas.getId().split(",");
-        int row = Integer.parseInt(coordinates[0]);
-        int col = Integer.parseInt(coordinates[1]);
+        int x = Integer.parseInt(coordinates[0]);
+        int y = Integer.parseInt(coordinates[1]);
         if (percentageFilled < 50) {
-//            String unlockMsg = "UNLOCK/" + row + "," + col;
-//            Client.getInstance().sendMessage(unlockMsg);
-//            System.out.println(unlockMsg);
+            String unlockMsg = "UNLOCK/" + x + "," + y;
+            Client.getInstance().sendMessage(unlockMsg);
             g.clearRect(0, 0, currentCanvas.getWidth(), currentCanvas.getHeight());
         } else {
             g.setFill(Color.CORAL); // we can set this to the user's color later, for testing purposes it's black
+//            g.setFill(Client.getInstance().getColor());
             g.fillRect(0, 0, currentCanvas.getWidth(), currentCanvas.getHeight());
-            cells[row][col].setTakenOver(true);
-            // send message to server after constructing a string "FILL/X,Y"
-            String fillMsg = "FILL/" + row + "," + col;
-//            Client.getInstance().sendMessage(fillMsg);
-            System.out.println(fillMsg);
+            cells[x][y].setTakenOver(true);
+            String fillMsg = "FILL/" + x + "," + y;
+            Client.getInstance().sendMessage(fillMsg);
         }
     }
 

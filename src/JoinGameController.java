@@ -22,7 +22,6 @@ public class JoinGameController {
     @FXML
     private TextField portInput;
     @FXML
-    private Button joinBtn;
     private Stage stage;
     private Scene scene;
     private Parent root;
@@ -37,21 +36,15 @@ public class JoinGameController {
         stage.show();
     }
 
-//    public void joinGameBTN(ActionEvent e)
-
     public void joinBtnClicked(ActionEvent e) throws IOException {
-
-        //HAVE TO DO MORE WORK HERE TO CHECK - IF CAN FIND THE CONNECTION
-//        String ipAddress = inputText.getText();
-//
-//        makeConnection(ipAddress);
-
         String ip = inputText.getText();
         String portNumber = portInput.getText();
 
-        Client.getInstance().sendMessage("JOIN");
-//        Client.getInstance().
+        Client.getInstance().setIpAddress(ip);
+        Client.getInstance().setPortNumber(Integer.parseInt(portNumber));
 
+        Client.getInstance().makeConnection();
+        Client.getInstance().sendMessage("JOIN");
 
         root = FXMLLoader.load(getClass().getResource("Scenes/Host_Waiting_Screen.fxml"));
         stage = (Stage)((Node)e.getSource()).getScene().getWindow();
@@ -63,12 +56,4 @@ public class JoinGameController {
         stage.show();
     }
 
-    public void makeConnection(String ipAddress){
-        try {
-            Socket MySocket = new Socket(ipAddress, 7070);
-//            OutputStream os
-        } catch (Exception e) {
-            System.out.println(e.toString());
-        }
-    }
 }

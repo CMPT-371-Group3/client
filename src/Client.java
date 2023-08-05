@@ -1,6 +1,7 @@
+import javafx.scene.paint.Color;
+
 import java.io.*;
 import java.net.Socket;
-import java.util.Scanner;
 
 public class Client {
 
@@ -9,63 +10,15 @@ public class Client {
     private InputStream is;
     private PrintWriter output;
     private BufferedReader input;
-//    private GameBoardController board;
+    private int colorNumber;
+    private Color color;
+    private String ipAddress;
+    private int portNumber;
 
     public static Client object;
     private Client() {
-        try {
-            this.socket = new Socket("localhost", 6000);
-            this.os = socket.getOutputStream();
-            this.is = socket.getInputStream();
-            this.output = new PrintWriter(os, true);
-            this.input = new BufferedReader(new InputStreamReader(is));
-
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
-
-    public void sendMessage(String payload) {
-        try {
-            // Write to the server
-            this.output.println(payload); //191.191
-            this.output.flush();
-        } catch (Exception e) {
-            System.out.println("Error: " + e.getMessage());
-        }
-    }
-
-    public void threadedListening(){
-        new Thread(()-> {
-            try {
-//                System.out.println("Thread running_____");
-                String serverMessage;
-                while((serverMessage = input.readLine()) != null){
-//                    System.out.println("Thread in while loop*******");
-                    System.out.println(serverMessage);
-                    String[] tokens = serverMessage.split("/");
-
-                    switch (tokens[0]) {
-                        case "EXIT":
-                            return;
-                        case "LOCK":
-                            String[] coordinates = tokens[1].split(",");
-                            int row = Integer.parseInt(coordinates[0]);
-                            int col = Integer.parseInt(coordinates[1]);
-                            System.out.println("LOCK message from server for " + row + " " + col);
-                            GameBoardController.getInstance().lockCell(row, col);
-
-                        case "UNLOCK":
-                        case "MESSAGE":
-                        case "FILL":
-
-
-                    }
-                }
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        }).start();
+        this.ipAddress = "";
+        this.portNumber = 0;
     }
 
     public static Client getInstance() {
@@ -79,15 +32,76 @@ public class Client {
         return object;
     }
 
-    private String ipAddress;
-    private int portNumber;
-//    private Socket socket;
-//    private OutputStream os;
-//    private InputStream is;
-//    private PrintWriter output;
-//    private BufferedReader input;
+    public void makeConnection() throws IOException {
+        this.socket = new Socket(this.ipAddress, portNumber);
+        this.os = socket.getOutputStream();
+        this.is = socket.getInputStream();
+        this.output = new PrintWriter(os, true);
+        this.input = new BufferedReader(new InputStreamReader(is));
+    }
+
+    public void sendMessage(String payload) {
+        try {
+            // Write to the server
+            this.output.println(payload);
+            this.output.flush();
+        } catch (Exception e) {
+            System.out.println("Error: " + e.getMessage());
+        }
+    }
+
+    public void threadedListening() {
+        new Thread(()-> {
+            try {
+                String serverMessage;
+                while((serverMessage = input.readLine()) != null){
+                    System.out.println(serverMessage);
+                    String[] tokens = serverMessage.split("/");
+
+                    switch (tokens[0]) {
+                        case "EXIT":
+                            return;
+                        case "LOCK":
+                            String[] coordinates = tokens[1].split(",");
+                            int x = Integer.parseInt(coordinates[0]);
+                            int y = Integer.parseInt(coordinates[1]);
+                            System.out.println("LOCK message from server for " + x + " " + y);
+                            GameBoardController.getInstance().lockCell(x, y);
+                            break;
+                        case "UNLOCK":
+                            coordinates = tokens[1].split(",");
+                            x = Integer.parseInt(coordinates[0]);
+                            y = Integer.parseInt(coordinates[1]);
+                            GameBoardController.getInstance().unlockCell(x, y);
+                            break;
+                        case "MESSAGE":
+                            //wtf
+                            break;
+                        case "FILL":
+                            coordinates = tokens[1].split(",");
+                            x = Integer.parseInt(coordinates[0]);
+                            y = Integer.parseInt(coordinates[1]);
+                            GameBoardController.getInstance().fillCell(x, y);
+                            break;
+                        case "PLAYER_NUMBER":
+                            String colorMsg = tokens[1];
+                            this.colorNumber = Integer.parseInt(colorMsg);
+                            switch (this.colorNumber) {
+                                case 1 -> this.color = Color.RED;
+                                case 2 -> this.color = Color.BLUE;
+                                case 3 -> this.color = Color.GREEN;
+                                case 4 -> this.color = Color.PURPLE;
+                            }
+                            break;
+                    }
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }).start();
+    }
+
     private String addressWithPort;
-    private Scanner sc;
     private Boolean msgSent;
 //    private static final Object lock = new Object();
 
@@ -111,8 +125,21 @@ public class Client {
 //        }
 //    }
 
-    public String getMessage() {
-        return sc.nextLine();
+
+    public void setIpAddress(String ipAddress) {
+        this.ipAddress = ipAddress;
+    }
+
+    public void setPortNumber(int portNumber) {
+        this.portNumber = portNumber;
+    }
+
+    public int getColorNumber() {
+        return colorNumber;
+    }
+
+    public void setColorNumber(int colorNumber) {
+        this.colorNumber = colorNumber;
     }
 
     public String listenForMessage() {
