@@ -175,6 +175,21 @@ public class Client {
         return colorNumber;
     }
 
+    public Color getColorOf(int owner){
+        switch (owner) {
+            case 1:
+                return Color.RED;
+            case 2:
+                return Color.BLUE;
+            case 3:
+                return Color.GREEN;
+            case 4:
+                return Color.PURPLE;
+            default:
+                return Color.BLACK;
+        }
+    }
+
     public void setColorNumber(int colorNumber) {
         this.colorNumber = colorNumber;
     }
