@@ -51,8 +51,9 @@ public class GameBoardController{
     // **********************************************************************
     // these functions are to handle broadcast messages that come in from the server
     // i.e. when OTHER players lock, unlock, fill a cell
-    public void lockCell(int x, int y) {
+    public void lockCell(int x, int y, int owner) {
         cells[x][y].setLocked(true);
+        cells[x][y].setOwner(owner);
         System.out.println("lockCell method called-  " + x + " " + y + " is locked: " + cells[x][y].isLocked());
     }
 
@@ -61,9 +62,38 @@ public class GameBoardController{
         System.out.println("unlocked " + x + " " + y + " is locked: " + cells[x][y].isLocked());
     }
 
-    public void fillCell(int x, int y) {
+    public void fillCell(int x, int y, int owner) {
         cells[x][y].setTakenOver(true);
-        System.out.println("filled " + x + " " + y + " is filled: " + cells[x][y].isTakenOver());
+        cells[x][y].setOwner(owner);
+//        Canvas c = cells[x][y].getCanvas();
+//        GraphicsContext gc = c.getGraphicsContext2D();
+//        System.out.println("canvas: " + c);
+//        System.out.println("canvasID: " + c.getId());
+//        System.out.println("width: " + c.getWidth() + " height: " + c.getHeight());
+//        gc.setFill(Color.BLACK);
+//        gc.fillRect(0,0, c.getWidth(), c.getHeight());
+
+//        String canvasID = x + "," + y;
+//        Canvas currentCanvas =  (Canvas) scene.lookup("#" + canvasID);
+//        GraphicsContext gc = currentCanvas.getGraphicsContext2D();
+//        gc.setFill(Color.BLACK);
+//        gc.fillRect(0,0, currentCanvas.getWidth(), currentCanvas.getHeight());
+
+//        FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("Scenes/Game_Board.fxml"));
+////        fxmlLoader.setController(this);
+//        try {
+//            root = fxmlLoader.load();
+//        } catch (IOException e) {
+//            e.printStackTrace();
+//        }
+//
+//        scene = root.getScene();
+//        String canvasID = x + "," + y;
+//        Canvas currentCanvas =  (Canvas) scene.lookup("#" + canvasID);
+//        GraphicsContext gc = currentCanvas.getGraphicsContext2D();
+//        gc.setFill(Color.BLACK);
+//        gc.fillRect(0,0, currentCanvas.getWidth(), currentCanvas.getHeight());
+//        System.out.println("filled " + x + " " + y + " is filled: " + cells[x][y].isTakenOver());
     }
     // ***********************************************************************
 
@@ -82,13 +112,15 @@ public class GameBoardController{
                 String lockMsg = "LOCK/" + x + "," + y;
                 Client.getInstance().sendMessage(lockMsg);
             }
-            GraphicsContext g = currentCanvas.getGraphicsContext2D();
-            double size = 2;
-            double xCoord = mouseEvent.getX() - size;
-            double yCoord = mouseEvent.getY() - size;
-            g.setFill(Color.LIMEGREEN);
-//            g.setFill(Client.getInstance().getColor());
-            g.fillRect(xCoord, yCoord, size, size);
+            if (currentCell.getOwner() == Client.getInstance().getColorNumber()) {
+                GraphicsContext g = currentCanvas.getGraphicsContext2D();
+                double size = 5;
+                double xCoord = mouseEvent.getX() - size;
+                double yCoord = mouseEvent.getY() - size;
+//            g.setFill(Color.LIMEGREEN);
+                g.setFill(Client.getInstance().getColor());
+                g.fillRect(xCoord, yCoord, size, size);
+            }
         }
     }
 
@@ -104,7 +136,7 @@ public class GameBoardController{
         for (int x=0; x<width; x++) {
             for (int y=0; y<height; y++) {
                 Color color = pixelReader.getColor(x, y);
-                if (color.equals(Color.LIMEGREEN)) {
+                if (color.equals(Client.getInstance().getColor())) {
                     pixelsDrawn++;
                 }
             }
@@ -126,10 +158,12 @@ public class GameBoardController{
         if (percentageFilled < 50) {
             String unlockMsg = "UNLOCK/" + x + "," + y;
             Client.getInstance().sendMessage(unlockMsg);
+            cells[x][y].setLocked(false);
             g.clearRect(0, 0, currentCanvas.getWidth(), currentCanvas.getHeight());
         } else {
-            g.setFill(Color.CORAL); // we can set this to the user's color later, for testing purposes it's black
-//            g.setFill(Client.getInstance().getColor());
+//            g.setFill(Color.CORAL); // we can set this to the user's color later, for testing purposes it's black
+            g.setFill(Client.getInstance().getColor());
+            System.out.println("Fill color: " + Client.getInstance().getColor());
             g.fillRect(0, 0, currentCanvas.getWidth(), currentCanvas.getHeight());
             cells[x][y].setTakenOver(true);
             String fillMsg = "FILL/" + x + "," + y;

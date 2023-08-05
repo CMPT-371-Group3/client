@@ -8,6 +8,7 @@ public class Cell {
     private final int x;
     private final int y;
     private boolean isLocked;
+    private int owner;
 
     public Cell(Canvas canvas, Color color, boolean isTakenOver, int x, int y, boolean isLocked) {
         this.canvas = canvas;
@@ -16,6 +17,14 @@ public class Cell {
         this.x = x;
         this.y = y;
         this.isLocked = false;
+    }
+
+    public int getOwner() {
+        return owner;
+    }
+
+    public void setOwner(int owner) {
+        this.owner = owner;
     }
 
     public void setCanvas(Canvas canvas) {
