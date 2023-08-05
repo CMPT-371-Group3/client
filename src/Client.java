@@ -1,4 +1,12 @@
+import javafx.event.ActionEvent;
+import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Node;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
+import javafx.scene.image.Image;
 import javafx.scene.paint.Color;
+import javafx.stage.Stage;
 
 import java.io.*;
 import java.net.Socket;
@@ -14,6 +22,11 @@ public class Client {
     private Color color;
     private String ipAddress;
     private int portNumber;
+
+    @FXML
+    private Stage stage;
+    private Scene scene;
+    private Parent root;
 
     public static Client object;
     private Client() {
@@ -50,6 +63,17 @@ public class Client {
         }
     }
 
+    public void switchToGameBoard(ActionEvent e) throws IOException {
+        //stop listening
+        root = FXMLLoader.load(getClass().getResource("Scenes/Game_Board.fxml"));
+        stage = (Stage)((Node)e.getSource()).getScene().getWindow();
+        scene = new Scene(root);
+        Image icon = new Image("Scenes/garfield_deny.jpg");
+        stage.getIcons().add(icon);
+        stage.setScene(scene);
+        stage.show();
+    }
+
     public void threadedListening() {
         new Thread(()-> {
             try {
@@ -57,15 +81,18 @@ public class Client {
                 while((serverMessage = input.readLine()) != null){
                     System.out.println(serverMessage);
                     String[] tokens = serverMessage.split("/");
-
+                    System.out.println("BROADCAST FROM SERVER: " + serverMessage);
                     switch (tokens[0]) {
                         case "EXIT":
                             return;
+                        case "START":
+//                            this.switchToGameBoard(e);
+                            break;
                         case "LOCK":
                             String[] coordinates = tokens[1].split(",");
                             int x = Integer.parseInt(coordinates[0]);
                             int y = Integer.parseInt(coordinates[1]);
-                            System.out.println("LOCK message from server for " + x + " " + y);
+//                            System.out.println("LOCK message from server for " + x + " " + y);
                             GameBoardController.getInstance().lockCell(x, y);
                             break;
                         case "UNLOCK":
@@ -92,6 +119,7 @@ public class Client {
                                 case 3 -> this.color = Color.GREEN;
                                 case 4 -> this.color = Color.PURPLE;
                             }
+                            System.out.println("Player number is: " + this.colorNumber);
                             break;
                     }
                 }
@@ -125,6 +153,10 @@ public class Client {
 //        }
 //    }
 
+
+    public Color getColor() {
+        return color;
+    }
 
     public void setIpAddress(String ipAddress) {
         this.ipAddress = ipAddress;

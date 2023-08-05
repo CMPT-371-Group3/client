@@ -63,6 +63,7 @@ public class GameBoardController{
 
     public void fillCell(int x, int y) {
         cells[x][y].setTakenOver(true);
+//        cells[x][y].getCanvas().getGraphicsContext2D().setFill(Color.BLACK);
         System.out.println("filled " + x + " " + y + " is filled: " + cells[x][y].isTakenOver());
     }
     // ***********************************************************************
@@ -86,8 +87,8 @@ public class GameBoardController{
             double size = 2;
             double xCoord = mouseEvent.getX() - size;
             double yCoord = mouseEvent.getY() - size;
-            g.setFill(Color.LIMEGREEN);
-//            g.setFill(Client.getInstance().getColor());
+//            g.setFill(Color.LIMEGREEN);
+            g.setFill(Client.getInstance().getColor());
             g.fillRect(xCoord, yCoord, size, size);
         }
     }
@@ -104,7 +105,7 @@ public class GameBoardController{
         for (int x=0; x<width; x++) {
             for (int y=0; y<height; y++) {
                 Color color = pixelReader.getColor(x, y);
-                if (color.equals(Color.LIMEGREEN)) {
+                if (color.equals(Client.getInstance().getColor())) {
                     pixelsDrawn++;
                 }
             }
@@ -126,10 +127,12 @@ public class GameBoardController{
         if (percentageFilled < 50) {
             String unlockMsg = "UNLOCK/" + x + "," + y;
             Client.getInstance().sendMessage(unlockMsg);
+            cells[x][y].setLocked(false);
             g.clearRect(0, 0, currentCanvas.getWidth(), currentCanvas.getHeight());
         } else {
-            g.setFill(Color.CORAL); // we can set this to the user's color later, for testing purposes it's black
-//            g.setFill(Client.getInstance().getColor());
+//            g.setFill(Color.CORAL); // we can set this to the user's color later, for testing purposes it's black
+            g.setFill(Client.getInstance().getColor());
+            System.out.println("Fill color: " + Client.getInstance().getColor());
             g.fillRect(0, 0, currentCanvas.getWidth(), currentCanvas.getHeight());
             cells[x][y].setTakenOver(true);
             String fillMsg = "FILL/" + x + "," + y;
