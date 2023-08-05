@@ -37,17 +37,32 @@ public class GameBoardController{
         }
         return object;
     }
-    public void initialize() {
-        System.out.println("IN the initialize function");
+
+    public void linkCanvas(Scene givenScene) {
+//        System.out.println("IN the initialize function");
         for (int x=0; x<8; x++) {
             for (int y=0; y<8; y++) {
-                Canvas c = new Canvas();
-                Cell cell = new Cell(c, Color.TRANSPARENT, false, x, y, false);
+                scene = givenScene;
+                String canvasID = x + "," + y;
+                Canvas currentCanvas =  (Canvas) scene.lookup("#" + canvasID);
+                Cell cell = new Cell(currentCanvas, Color.TRANSPARENT, false, x, y, false);
                 cells[x][y] = cell;
+                System.out.println("BEFORE 47 " + cells[x][y].getCanvas().getHeight());
                 cells[x][y].getCanvas().setOnMouseDragged(this::handleMouseDragged);
             }
         }
     }
+//    public void initialize() {
+//        System.out.println("IN the initialize function");
+//        for (int x=0; x<8; x++) {
+//            for (int y=0; y<8; y++) {
+//                Canvas c = new Canvas();
+//                Cell cell = new Cell(c, Color.TRANSPARENT, false, x, y, false);
+//                cells[x][y] = cell;
+//                cells[x][y].getCanvas().setOnMouseDragged(this::handleMouseDragged);
+//            }
+//        }
+//    }
     // **********************************************************************
     // these functions are to handle broadcast messages that come in from the server
     // i.e. when OTHER players lock, unlock, fill a cell
@@ -62,16 +77,35 @@ public class GameBoardController{
         System.out.println("unlocked " + x + " " + y + " is locked: " + cells[x][y].isLocked());
     }
 
-    public void fillCell(int x, int y, int owner) {
+    public void fillCell(int x, int y, int owner) throws IOException {
         cells[x][y].setTakenOver(true);
         cells[x][y].setOwner(owner);
+
+        Canvas c = cells[x][y].getCanvas();
+        GraphicsContext gc = c.getGraphicsContext2D();
+
+        gc.setFill(Color.BLACK);
+        gc.fillRect(0,0, c.getWidth(), c.getHeight());
+//        for (int i=0; i<8; i++) {
+//            for (int j=0; j<8; j++) {
+//                System.out.println("C "+ i + j + "Width: " + cells[i][j].getCanvas().getWidth() + " Height: " + cells[i][j].getCanvas().getHeight());
+//            }
+//        }
+//        System.out.println("X: " + x + " Y: " + y);
+//        System.out.println(cells[x][y].getCanvas());
+//        System.out.println(cells[x][y].getCanvas().getGraphicsContext2D());
+//        System.out.println("width: " + cells[x][y].getCanvas().getWidth() + " height: " + cells[x][y].getCanvas().getHeight());
+//        cells[x][y].getCanvas().getGraphicsContext2D().setFill(Color.BLACK);
+////        cells[x][y].getCanvas().getGraphicsContext2D().fillRect(0, 0, cells[x][y].getCanvas().getWidth(), cells[x][y].getCanvas().getHeight());
+//        cells[x][y].getCanvas().getGraphicsContext2D().fillRect(0, 0, 60, 40);
+
 //        Canvas c = cells[x][y].getCanvas();
 //        GraphicsContext gc = c.getGraphicsContext2D();
 //        System.out.println("canvas: " + c);
 //        System.out.println("canvasID: " + c.getId());
 //        System.out.println("width: " + c.getWidth() + " height: " + c.getHeight());
 //        gc.setFill(Color.BLACK);
-//        gc.fillRect(0,0, c.getWidth(), c.getHeight());
+//        gc.fillRect(0,0, 60, 40);
 
 //        String canvasID = x + "," + y;
 //        Canvas currentCanvas =  (Canvas) scene.lookup("#" + canvasID);

@@ -73,6 +73,7 @@ public class SceneController {
         Image icon = new Image("Scenes/garfield_deny.jpg");
         stage.getIcons().add(icon);
         stage.setScene(scene);
+        GameBoardController.getInstance().linkCanvas(scene);
         stage.show();
     }
 
