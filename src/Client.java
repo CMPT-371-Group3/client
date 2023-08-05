@@ -81,21 +81,24 @@ public class Client {
                 while((serverMessage = input.readLine()) != null){
                     System.out.println(serverMessage);
                     String[] tokens = serverMessage.split("/");
-                    System.out.println("BROADCAST FROM SERVER: " + serverMessage);
                     switch (tokens[0]) {
                         case "EXIT":
                             return;
                         case "START":
+                            System.out.println("SERVER START");
 //                            this.switchToGameBoard(e);
                             break;
                         case "LOCK":
+                            System.out.println("SERVER LOCK");
                             String[] coordinates = tokens[1].split(",");
+                            String owner = tokens[2];
                             int x = Integer.parseInt(coordinates[0]);
                             int y = Integer.parseInt(coordinates[1]);
 //                            System.out.println("LOCK message from server for " + x + " " + y);
-                            GameBoardController.getInstance().lockCell(x, y);
+                            GameBoardController.getInstance().lockCell(x, y, Integer.parseInt(owner));
                             break;
                         case "UNLOCK":
+                            System.out.println("SERVER UNLOCK");
                             coordinates = tokens[1].split(",");
                             x = Integer.parseInt(coordinates[0]);
                             y = Integer.parseInt(coordinates[1]);
@@ -105,10 +108,12 @@ public class Client {
                             //wtf
                             break;
                         case "FILL":
+                            System.out.println("SERVER FILL");
                             coordinates = tokens[1].split(",");
+                            owner = tokens[2];
                             x = Integer.parseInt(coordinates[0]);
                             y = Integer.parseInt(coordinates[1]);
-                            GameBoardController.getInstance().fillCell(x, y);
+                            GameBoardController.getInstance().fillCell(x, y, Integer.parseInt(owner));
                             break;
                         case "PLAYER_NUMBER":
                             String colorMsg = tokens[1];

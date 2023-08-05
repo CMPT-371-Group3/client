@@ -20,6 +20,8 @@ public class GameBoardController{
     private Parent root;
     private Stage stage;
     private Scene scene;
+    @FXML
+    private Canvas canvas11211111;
 
     public static volatile Cell[][] cells = new Cell[8][8];
     public static GameBoardController object;
@@ -37,21 +39,72 @@ public class GameBoardController{
         }
         return object;
     }
-    public void initialize() {
-        System.out.println("IN the initialize function");
+//    public void initialize() {
+//        System.out.println("IN the initialize function");
+//        for (int x=0; x<8; x++) {
+//            for (int y=0; y<8; y++) {
+//                Canvas c = new Canvas();
+//                c.setHeight(40);
+//                c.setWidth(60);
+//
+//                //get the canvas from the scene
+//                //link this to the canvas in the cell
+////                GraphicsContext.
+//
+//
+//                scene = root.getScene();
+//                String canvasID = x + "," + y;
+//                Canvas currentCanvas =  (Canvas) scene.lookup("#" + canvasID);
+//                GraphicsContext gc = currentCanvas.getGraphicsContext2D();
+//                gc.setFill(Color.BLACK);
+//                gc.fillRect(0,0, currentCanvas.getWidth(), currentCanvas.getHeight());
+//
+//                Cell cell = new Cell(c, Color.TRANSPARENT, false, x, y, false);
+////                Cell cell = new Cell(canvas11211111, Color.TRANSPARENT, false, x, y, false);
+//                cells[x][y] = cell;
+//                System.out.println("BEFORE 47 " + cells[x][y].getCanvas().getHeight());
+//                cells[x][y].getCanvas().setOnMouseDragged(this::handleMouseDragged);
+//            }
+//        }
+//        cells[0][7].setCanvas(canvas11211111);
+//    }
+
+    public void linkCanvas(Scene givenScene) {
+//        System.out.println("IN the initialize function");
         for (int x=0; x<8; x++) {
             for (int y=0; y<8; y++) {
-                Canvas c = new Canvas();
-                Cell cell = new Cell(c, Color.TRANSPARENT, false, x, y, false);
+//                Canvas c = new Canvas();
+//                c.setHeight(40);
+//                c.setWidth(60);
+
+                //get the canvas from the scene
+                //link this to the canvas in the cell
+//                GraphicsContext.
+
+
+//                scene = root.getScene();
+                scene = givenScene;
+                String canvasID = x + "," + y;
+                Canvas currentCanvas =  (Canvas) scene.lookup("#" + canvasID);
+
+//                Cell cell = new Cell(c, Color.TRANSPARENT, false, x, y, false);
+                Cell cell = new Cell(currentCanvas, Color.TRANSPARENT, false, x, y, false);
                 cells[x][y] = cell;
+                System.out.println("BEFORE 47 " + cells[x][y].getCanvas().getHeight());
                 cells[x][y].getCanvas().setOnMouseDragged(this::handleMouseDragged);
             }
         }
     }
+
+    public void setScene(Scene scene) {
+        this.scene = scene;
+    }
+
     // **********************************************************************
     // these functions are to handle broadcast messages that come in from the server
     // i.e. when OTHER players lock, unlock, fill a cell
-    public void lockCell(int x, int y) {
+    public void lockCell(int x, int y, int Owner) {
+        cells[x][y].setOwner(Owner);
         cells[x][y].setLocked(true);
         System.out.println("lockCell method called-  " + x + " " + y + " is locked: " + cells[x][y].isLocked());
     }
@@ -61,9 +114,61 @@ public class GameBoardController{
         System.out.println("unlocked " + x + " " + y + " is locked: " + cells[x][y].isLocked());
     }
 
-    public void fillCell(int x, int y) {
+    public void fillCell(int x, int y, int Owner) throws IOException{
+        cells[x][y].setOwner(Owner);
         cells[x][y].setTakenOver(true);
+
+        Canvas c = cells[x][y].getCanvas();
+        GraphicsContext gc = c.getGraphicsContext2D();
+
+
+
+        gc.setFill(Color.BLACK);
+        gc.fillRect(0,0, c.getWidth(), c.getHeight());
+
+//        for (int x1=0; x1<8; x1++) {
+//            for (int y1=0; y1<8; y1++) {
+//                System.out.println("AFTER 47" + cells[x1][y1].getCanvas().getHeight());
+//            }
+//        }
+
 //        cells[x][y].getCanvas().getGraphicsContext2D().setFill(Color.BLACK);
+//        cells[x][y].getCanvas().getGraphicsContext2D().fillRect(0,0, cells[x][y].getCanvas().getWidth(), cells[x][y].getCanvas().getHeight());
+
+//        FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("Scenes/Game_Board.fxml"));
+////        fxmlLoader.setController(this);
+//        try {
+//            root = fxmlLoader.load();
+//        } catch (IOException e) {
+//        }
+//
+//        scene = root.getScene();
+//        String canvasID = x + "," + y;
+//        Canvas currentCanvas =  (Canvas) scene.lookup("#" + canvasID);
+//        GraphicsContext gc = currentCanvas.getGraphicsContext2D();
+//        gc.setFill(Color.BLACK);
+//        gc.fillRect(0,0, currentCanvas.getWidth(), currentCanvas.getHeight());
+
+//        Parent root = FXMLLoader.load(getClass().getResource("Scenes/Game_Board.fxml"));
+//        this.scene = root.getScene();
+//        String canvasID = x + "," + y;
+//        Canvas currentCanvas =  (Canvas) scene.lookup("#" + canvasID);
+//        GraphicsContext gc = currentCanvas.getGraphicsContext2D();
+//        gc.setFill(Color.BLACK);
+//        gc.fillRect(0,0, currentCanvas.getWidth(), currentCanvas.getHeight());
+
+        System.out.println(cells[x][y].getCanvas());
+        System.out.println(cells[x][y].getCanvas().getGraphicsContext2D());
+        System.out.println("width: " + cells[x][y].getCanvas().getWidth() + " height: " + cells[x][y].getCanvas().getHeight());
+        cells[x][y].getCanvas().getGraphicsContext2D().setFill(Color.BLACK);
+        cells[x][y].getCanvas().getGraphicsContext2D().fillRect(0, 0, cells[x][y].getCanvas().getWidth(), cells[x][y].getCanvas().getHeight());
+
+//        for (int x1=0; x1<8; x1++) {
+//            for (int y1=0; y1<8; y1++) {
+//                System.out.println("AFTER 47 " + cells[x1][y1].getCanvas().getHeight());
+//            }
+//        }
+
         System.out.println("filled " + x + " " + y + " is filled: " + cells[x][y].isTakenOver());
     }
     // ***********************************************************************
@@ -75,6 +180,7 @@ public class GameBoardController{
         String[] coordinates = currentCanvas.getId().split(",");
         int x = Integer.parseInt(coordinates[0]);
         int y = Integer.parseInt(coordinates[1]);
+//        cells[x][y].setCanvas(currentCanvas);
 
         Cell currentCell = cells[x][y];
         if (!currentCell.isTakenOver()) {
@@ -83,15 +189,42 @@ public class GameBoardController{
                 String lockMsg = "LOCK/" + x + "," + y;
                 Client.getInstance().sendMessage(lockMsg);
             }
-            GraphicsContext g = currentCanvas.getGraphicsContext2D();
-            double size = 2;
-            double xCoord = mouseEvent.getX() - size;
-            double yCoord = mouseEvent.getY() - size;
+            if (currentCell.getOwner() == Client.getInstance().getColorNumber()) {
+                GraphicsContext g = currentCanvas.getGraphicsContext2D();
+                double size = 5;
+                double xCoord = mouseEvent.getX() - size;
+                double yCoord = mouseEvent.getY() - size;
 //            g.setFill(Color.LIMEGREEN);
-            g.setFill(Client.getInstance().getColor());
-            g.fillRect(xCoord, yCoord, size, size);
+                g.setFill(Client.getInstance().getColor());
+                g.fillRect(xCoord, yCoord, size, size);
+            }
         }
     }
+//    private void handleMouseDragged(MouseEvent mouseEvent) {
+//        Canvas currentCanvas = (Canvas) mouseEvent.getSource();
+//        String[] coordinates = currentCanvas.getId().split(",");
+//        int x = Integer.parseInt(coordinates[0]);
+//        int y = Integer.parseInt(coordinates[1]);
+//
+//        Cell currentCell = cells[x][y];
+//        System.out.println("in mouse dragged is cell locked?: " + currentCell.isLocked());
+//        if (!currentCell.isTakenOver()) {
+//            if (!currentCell.isLocked()) {
+//                currentCell.setLocked(true);
+//                String lockMsg = "LOCK/" + x + "," + y;
+//                Client.getInstance().sendMessage(lockMsg);
+//            }
+//
+//
+//            GraphicsContext g = currentCanvas.getGraphicsContext2D();
+//            double size = 2;
+//            double xCoord = mouseEvent.getX() - size;
+//            double yCoord = mouseEvent.getY() - size;
+////              g.setFill(Color.LIMEGREEN);
+//            g.setFill(Client.getInstance().getColor());
+//            g.fillRect(xCoord, yCoord, size, size);
+//        }
+//    }
 
     public double calculatePercentageDrawn(Canvas canvas) {
         int width = (int) canvas.getWidth();
@@ -149,4 +282,5 @@ public class GameBoardController{
         stage.setScene(scene);
         stage.show();
     }
+
 }
