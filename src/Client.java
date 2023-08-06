@@ -22,6 +22,9 @@ public class Client {
     private Color color;
     private String ipAddress;
     private int portNumber;
+//    private Scene givenScene;
+//    private Parent givenRoot;
+//    private Stage givenStage;
 
     @FXML
     private Stage stage;
@@ -86,7 +89,8 @@ public class Client {
                             return;
                         case "START":
                             System.out.println("SERVER START");
-//                            this.switchToGameBoard(e);
+//                            this.switchToGameBoard();
+//                            SceneController.class.swi
                             break;
                         case "LOCK":
                             System.out.println("SERVER LOCK");
@@ -104,8 +108,10 @@ public class Client {
                             y = Integer.parseInt(coordinates[1]);
                             GameBoardController.getInstance().unlockCell(x, y);
                             break;
-                        case "MESSAGE":
-                            //wtf
+                        case "STOP":
+                            int winner = Integer.parseInt(tokens[1]);
+                            GameBoardController.getInstance().setWinner(winner);
+//                            GameBoardController.getInstance().switchToEndScreen2(winner);
                             break;
                         case "FILL":
                             System.out.println("SERVER FILL");
@@ -189,6 +195,23 @@ public class Client {
                 return Color.BLACK;
         }
     }
+
+//    public void setGameBoardVars(Parent root,Stage stage,  Scene scene) {
+//        this.givenRoot = root;
+//        this.givenStage = stage;
+//        this.givenScene = scene;
+//    }
+
+//    public void switchToGameBoard() throws IOException {
+////        root = FXMLLoader.load(getClass().getResource("Scenes/Game_Board.fxml"));
+////        stage = (Stage)((Node)givenEvent.getSource()).getScene().getWindow();
+////        scene = new Scene(root);
+//        Image icon = new Image("Scenes/garfield_deny.jpg");
+//        givenStage.getIcons().add(icon);
+//        givenStage.setScene(givenScene);
+//        GameBoardController.getInstance().linkCanvas(givenScene);
+//        givenStage.show();
+//    }
 
     public void setColorNumber(int colorNumber) {
         this.colorNumber = colorNumber;

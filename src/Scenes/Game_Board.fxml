@@ -272,6 +272,6 @@
          <children>
             <Canvas id="7,7" fx:id="canvas1311111111111111111111111111111111111111111111111" height="40.0" onMouseDragged="#handleMouseDragged" onMouseReleased="#releasedDrag" width="60.0" />
          </children></Pane>
-      <Button layoutX="465.0" layoutY="11.0" mnemonicParsing="false" onAction="#switchToMainPage" text="Back to Home" />
+      <Button layoutX="465.0" layoutY="11.0" mnemonicParsing="false" onAction="#switchToEndScreen" text="Finish Game" />
    </children>
 </AnchorPane>

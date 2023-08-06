@@ -20,6 +20,8 @@ public class GameBoardController{
     private Parent root;
     private Stage stage;
     private Scene scene;
+    private static volatile int winner = -1;
+//    private Scene givenScene;
 
     public static volatile Cell[][] cells = new Cell[8][8];
     public static GameBoardController object;
@@ -40,6 +42,7 @@ public class GameBoardController{
 
     public void linkCanvas(Scene givenScene) {
 //        System.out.println("IN the initialize function");
+        this.winner = -1;
         for (int x=0; x<8; x++) {
             for (int y=0; y<8; y++) {
                 scene = givenScene;
@@ -52,17 +55,8 @@ public class GameBoardController{
             }
         }
     }
-    //    public void initialize() {
-//        System.out.println("IN the initialize function");
-//        for (int x=0; x<8; x++) {
-//            for (int y=0; y<8; y++) {
-//                Canvas c = new Canvas();
-//                Cell cell = new Cell(c, Color.TRANSPARENT, false, x, y, false);
-//                cells[x][y] = cell;
-//                cells[x][y].getCanvas().setOnMouseDragged(this::handleMouseDragged);
-//            }
-//        }
-//    }
+
+
     // **********************************************************************
     // these functions are to handle broadcast messages that come in from the server
     // i.e. when OTHER players lock, unlock, fill a cell
@@ -74,8 +68,10 @@ public class GameBoardController{
         Canvas c = cells[x][y].getCanvas();
         GraphicsContext gc = c.getGraphicsContext2D();
 
-        gc.setFill(Color.DIMGREY);
-        gc.fillRect(0,0, c.getWidth(), c.getHeight());
+        if(owner != Client.getInstance().getColorNumber()){
+            gc.setFill(Color.DIMGREY);
+            gc.fillRect(0,0, c.getWidth(), c.getHeight());
+        }
     }
 
     public void unlockCell(int x, int y) {
@@ -97,50 +93,6 @@ public class GameBoardController{
 
         gc.setFill(Client.getInstance().getColorOf(owner));
         gc.fillRect(0,0, c.getWidth(), c.getHeight());
-
-
-//        for (int i=0; i<8; i++) {
-//            for (int j=0; j<8; j++) {
-//                System.out.println("C "+ i + j + "Width: " + cells[i][j].getCanvas().getWidth() + " Height: " + cells[i][j].getCanvas().getHeight());
-//            }
-//        }
-//        System.out.println("X: " + x + " Y: " + y);
-//        System.out.println(cells[x][y].getCanvas());
-//        System.out.println(cells[x][y].getCanvas().getGraphicsContext2D());
-//        System.out.println("width: " + cells[x][y].getCanvas().getWidth() + " height: " + cells[x][y].getCanvas().getHeight());
-//        cells[x][y].getCanvas().getGraphicsContext2D().setFill(Color.BLACK);
-////        cells[x][y].getCanvas().getGraphicsContext2D().fillRect(0, 0, cells[x][y].getCanvas().getWidth(), cells[x][y].getCanvas().getHeight());
-//        cells[x][y].getCanvas().getGraphicsContext2D().fillRect(0, 0, 60, 40);
-
-//        Canvas c = cells[x][y].getCanvas();
-//        GraphicsContext gc = c.getGraphicsContext2D();
-//        System.out.println("canvas: " + c);
-//        System.out.println("canvasID: " + c.getId());
-//        System.out.println("width: " + c.getWidth() + " height: " + c.getHeight());
-//        gc.setFill(Color.BLACK);
-//        gc.fillRect(0,0, 60, 40);
-
-//        String canvasID = x + "," + y;
-//        Canvas currentCanvas =  (Canvas) scene.lookup("#" + canvasID);
-//        GraphicsContext gc = currentCanvas.getGraphicsContext2D();
-//        gc.setFill(Color.BLACK);
-//        gc.fillRect(0,0, currentCanvas.getWidth(), currentCanvas.getHeight());
-
-//        FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("Scenes/Game_Board.fxml"));
-////        fxmlLoader.setController(this);
-//        try {
-//            root = fxmlLoader.load();
-//        } catch (IOException e) {
-//            e.printStackTrace();
-//        }
-//
-//        scene = root.getScene();
-//        String canvasID = x + "," + y;
-//        Canvas currentCanvas =  (Canvas) scene.lookup("#" + canvasID);
-//        GraphicsContext gc = currentCanvas.getGraphicsContext2D();
-//        gc.setFill(Color.BLACK);
-//        gc.fillRect(0,0, currentCanvas.getWidth(), currentCanvas.getHeight());
-//        System.out.println("filled " + x + " " + y + " is filled: " + cells[x][y].isTakenOver());
     }
 
 
@@ -165,7 +117,6 @@ public class GameBoardController{
                 double size = 5;
                 double xCoord = mouseEvent.getX() - size;
                 double yCoord = mouseEvent.getY() - size;
-//            g.setFill(Color.LIMEGREEN);
                 g.setFill(Client.getInstance().getColor());
                 g.fillRect(xCoord, yCoord, size, size);
             }
@@ -228,7 +179,7 @@ public class GameBoardController{
     }
 
     public void switchToMainPage(ActionEvent e) throws IOException {
-        root = FXMLLoader.load(getClass().getResource("Scenes/Main.fxml"));
+        root = FXMLLoader.load(getClass().getResource("Scenes/End_Screen.fxml"));
         stage = (Stage)((Node)e.getSource()).getScene().getWindow();
         scene = new Scene(root);
         Image icon = new Image("Scenes/garfield_deny.jpg");
@@ -236,4 +187,44 @@ public class GameBoardController{
         stage.setScene(scene);
         stage.show();
     }
+
+    public void switchToEndScreen(ActionEvent e) throws IOException {
+        if (winner != -1) {
+//            EndScreenController.getInstance().setWinner(winner);
+            root = FXMLLoader.load(getClass().getResource("Scenes/End_Screen.fxml"));
+            stage = (Stage)((Node)e.getSource()).getScene().getWindow();
+            scene = new Scene(root);
+            Image icon = new Image("Scenes/garfield_deny.jpg");
+            stage.getIcons().add(icon);
+            stage.setScene(scene);
+            stage.show();
+        }
+    }
+
+    public void setWinner(int newWinner) {
+        this.winner = newWinner;
+        EndScreenController.getInstance().setWinner(newWinner);
+    }
+
+//    @FXML
+//    public void switchToEndScreen2(int winner) throws IOException {
+//        FXMLLoader loader = new FXMLLoader(getClass().getResource("Scenes/End_Screen.fxml"));
+//        Parent newRoot = loader.load();
+//        stage = (Stage) scene.getWindow();
+//        scene = new Scene(newRoot);
+//        Image icon = new Image("Scenes/garfield_deny.jpg");
+//        stage.getIcons().add(icon);
+//        stage.setScene(scene);
+////        EndScreenController.getInstance().setWinner(winner);
+//        stage.show();
+////        EndScreenController.getInstance().setText();
+//
+////        FXMLLoader loader = new FXMLLoader(getClass().getResource("Scenes/End_Screen.fxml"));
+////        Parent newRoot;
+////        try {
+////            root = (Parent) loader.load();
+////            EndScreenController controller = (EndScreenController) loader.getController();
+////            controller.
+////        } catch (IOException e)
+//    }
 }
