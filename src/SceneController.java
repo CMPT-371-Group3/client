@@ -22,7 +22,7 @@ public class SceneController {
     private Label ipLabel;
     @FXML
     private Button readyBtn;
-    private ActionEvent reusableEvent;
+//    private ActionEvent reusableEvent;
 
     public void initialize() {
         System.out.println("Calling initialize..");

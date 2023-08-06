@@ -108,8 +108,10 @@ public class Client {
                             y = Integer.parseInt(coordinates[1]);
                             GameBoardController.getInstance().unlockCell(x, y);
                             break;
-                        case "MESSAGE":
-                            //wtf
+                        case "STOP":
+                            int winner = Integer.parseInt(tokens[1]);
+                            GameBoardController.getInstance().setWinner(winner);
+//                            GameBoardController.getInstance().switchToEndScreen2(winner);
                             break;
                         case "FILL":
                             System.out.println("SERVER FILL");
