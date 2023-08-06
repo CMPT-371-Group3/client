@@ -74,8 +74,10 @@ public class GameBoardController{
         Canvas c = cells[x][y].getCanvas();
         GraphicsContext gc = c.getGraphicsContext2D();
 
-        gc.setFill(Color.DIMGREY);
-        gc.fillRect(0,0, c.getWidth(), c.getHeight());
+        if(owner != Client.getInstance().getColorNumber()){
+            gc.setFill(Color.DIMGREY);
+            gc.fillRect(0,0, c.getWidth(), c.getHeight());
+        }
     }
 
     public void unlockCell(int x, int y) {

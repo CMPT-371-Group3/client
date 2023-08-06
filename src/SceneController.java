@@ -22,6 +22,7 @@ public class SceneController {
     private Label ipLabel;
     @FXML
     private Button readyBtn;
+    private ActionEvent reusableEvent;
 
     public void initialize() {
         System.out.println("Calling initialize..");
@@ -63,10 +64,17 @@ public class SceneController {
         readyBtn.setDisable(true);
         readyBtn.setText("Waiting");
         Client.getInstance().sendMessage("READY");
+
+        //**
+//        reusableEvent = e;
+//        root = FXMLLoader.load(getClass().getResource("Scenes/Game_Board.fxml"));
+//        stage = (Stage)((Node)e.getSource()).getScene().getWindow();
+//        scene = new Scene(root);
+//        Client.getInstance().setGameBoardVars(root, stage, scene);
+
     }
 
     public void switchToGameBoard(ActionEvent e) throws IOException {
-        //stop listening
         root = FXMLLoader.load(getClass().getResource("Scenes/Game_Board.fxml"));
         stage = (Stage)((Node)e.getSource()).getScene().getWindow();
         scene = new Scene(root);
@@ -75,10 +83,6 @@ public class SceneController {
         stage.setScene(scene);
         GameBoardController.getInstance().linkCanvas(scene);
         stage.show();
-
-//        GameBoardController.getInstance().setScene(scene);
-//        GameBoardController.getInstance().setRoot(root);
-//        GameBoardController.getInstance().linkCanvas(scene);
     }
 
     public void switchToJoinGame(ActionEvent e) throws  IOException {
