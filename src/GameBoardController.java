@@ -6,6 +6,7 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
+import javafx.scene.control.Label;
 import javafx.scene.image.Image;
 import javafx.scene.image.PixelReader;
 import javafx.scene.image.WritableImage;
@@ -41,9 +42,8 @@ public class GameBoardController{
     }
 
     public void linkCanvas(Scene givenScene) {
-//        System.out.println("IN the initialize function");
-        this.winner = -1;
-        this.everyoneInGame = false;
+        winner = -1;
+        everyoneInGame = false;
         for (int x=0; x<8; x++) {
             for (int y=0; y<8; y++) {
                 scene = givenScene;
@@ -51,7 +51,6 @@ public class GameBoardController{
                 Canvas currentCanvas =  (Canvas) scene.lookup("#" + canvasID);
                 Cell cell = new Cell(currentCanvas, Color.TRANSPARENT, false, x, y, false);
                 cells[x][y] = cell;
-//                System.out.println("BEFORE 47 " + cells[x][y].getCanvas().getHeight());
                 cells[x][y].getCanvas().setOnMouseDragged(this::handleMouseDragged);
             }
         }
@@ -61,7 +60,6 @@ public class GameBoardController{
     public void letUserPlay(){
         everyoneInGame = true;
     }
-
 
     // **********************************************************************
     // these functions are to handle broadcast messages that come in from the server
@@ -101,11 +99,9 @@ public class GameBoardController{
         gc.fillRect(0,0, c.getWidth(), c.getHeight());
     }
 
-
     // ***********************************************************************
     @FXML
     private void handleMouseDragged(MouseEvent mouseEvent) {
-        System.out.println("DRAGGING everyone in game: " + everyoneInGame);
         if(everyoneInGame) {
             Canvas currentCanvas = (Canvas) mouseEvent.getSource();
             String[] coordinates = currentCanvas.getId().split(",");
@@ -113,7 +109,6 @@ public class GameBoardController{
             int y = Integer.parseInt(coordinates[1]);
 
             Cell currentCell = cells[x][y];
-//        System.out.println("TAKEN OVER? " + x + " " + y + currentCell.isTakenOver());
             if (!currentCell.isTakenOver()) {
                 if (!currentCell.isLocked()) {
                     currentCell.setLocked(true);
@@ -150,13 +145,11 @@ public class GameBoardController{
             }
         }
         double totalPixels = height * width;
-        double percentage = (double) ((pixelsDrawn/totalPixels) * 100);
-//        System.out.println(percentage);
+        double percentage = (pixelsDrawn/totalPixels) * 100;
         return percentage;
     }
 
     public void releasedDrag(MouseEvent e) {
-        System.out.println("Everyone in game: " + everyoneInGame);
         if(everyoneInGame) {
             Canvas currentCanvas = (Canvas) e.getSource();
             GraphicsContext g = currentCanvas.getGraphicsContext2D();
@@ -176,7 +169,6 @@ public class GameBoardController{
                         cells[x][y].setLocked(false);
                         g.clearRect(0, 0, currentCanvas.getWidth(), currentCanvas.getHeight());
                     } else {
-//            g.setFill(Color.CORAL); // we can set this to the user's color later, for testing purposes it's black
                         g.setFill(Client.getInstance().getColor());
                         System.out.println("Fill color: " + Client.getInstance().getColor());
                         g.fillRect(0, 0, currentCanvas.getWidth(), currentCanvas.getHeight());
@@ -213,8 +205,13 @@ public class GameBoardController{
         }
     }
 
+    public void setWinners(int[] winners) {
+        winner = winners[0];
+        EndScreenController.getInstance().setWinners(winners);
+    }
+
     public void setWinner(int newWinner) {
-        this.winner = newWinner;
+        winner = newWinner;
         EndScreenController.getInstance().setWinner(newWinner);
     }
 

@@ -23,9 +23,6 @@ public class Client {
     private String ipAddress;
     private int portNumber;
     private boolean gameStarted;
-//    private Scene givenScene;
-//    private Parent givenRoot;
-//    private Stage givenStage;
 
     @FXML
     private Stage stage;
@@ -91,11 +88,8 @@ public class Client {
                             return;
                         case "START":
                             System.out.println("SERVER START");
-//                            this.switchToGameBoard();
-//                            SceneController.getInstance().switchToGameBoard2();
                             gameStarted = true;
-//                            SceneController.getInstance().notify();
-//                            notify();
+                            GameBoardController.getInstance();
                             GameBoardController.getInstance().letUserPlay();
                             break;
                         case "LOCK":
@@ -104,7 +98,6 @@ public class Client {
                             String owner = tokens[2];
                             int x = Integer.parseInt(coordinates[0]);
                             int y = Integer.parseInt(coordinates[1]);
-//                            System.out.println("LOCK message from server for " + x + " " + y);
                             GameBoardController.getInstance().lockCell(x, y, Integer.parseInt(owner));
                             break;
                         case "UNLOCK":
@@ -115,9 +108,18 @@ public class Client {
                             GameBoardController.getInstance().unlockCell(x, y);
                             break;
                         case "STOP":
-                            int winner = Integer.parseInt(tokens[1]);
-                            GameBoardController.getInstance().setWinner(winner);
-//                            GameBoardController.getInstance().switchToEndScreen2(winner);
+                            if (tokens[1].length() > 1) {
+                                String[] winners = tokens[1].split(",");
+                                int[] winnersArray = new int[winners.length];
+                                for (int i=0; i<winners.length; i++) {
+                                    System.out.println("winner " + i + ": " + Integer.parseInt(winners[i]));
+                                    winnersArray[i] = Integer.parseInt(winners[i]);
+                                }
+                                GameBoardController.getInstance().setWinners(winnersArray);
+                            } else {
+                                int winner = Integer.parseInt(tokens[1]);
+                                GameBoardController.getInstance().setWinner(winner);
+                            }
                             break;
                         case "FILL":
                             System.out.println("SERVER FILL");
@@ -148,28 +150,6 @@ public class Client {
 
     private String addressWithPort;
     private Boolean msgSent;
-//    private static final Object lock = new Object();
-
-    //create a client object in gameboard, create a new thread
-
-//    public Client(String ipAddress, int portNumber) {
-//        try {
-//            // Store any information needed then create the Socket, and the I/O
-//            this.ipAddress = ipAddress;
-//            this.portNumber = portNumber;
-//            this.socket = new Socket(ipAddress, portNumber);
-//            InputStream inputStream = socket.getInputStream();
-//            OutputStream outputStream = socket.getOutputStream();
-//            this.output = new PrintWriter(outputStream, true);
-//            this.input = new BufferedReader(new InputStreamReader(inputStream));
-//            this.addressWithPort = "";
-//            this.sc = new Scanner(System.in);
-//            this.msgSent = false;
-//        } catch (Exception e) {
-//            System.out.println("Error: " + e.getMessage());
-//        }
-//    }
-
 
     public Color getColor() {
         return color;
@@ -206,35 +186,8 @@ public class Client {
         }
     }
 
-//    public void setGameBoardVars(Parent root,Stage stage,  Scene scene) {
-//        this.givenRoot = root;
-//        this.givenStage = stage;
-//        this.givenScene = scene;
-//    }
-
-//    public void switchToGameBoard() throws IOException {
-////        root = FXMLLoader.load(getClass().getResource("Scenes/Game_Board.fxml"));
-////        stage = (Stage)((Node)givenEvent.getSource()).getScene().getWindow();
-////        scene = new Scene(root);
-//        Image icon = new Image("Scenes/garfield_deny.jpg");
-//        givenStage.getIcons().add(icon);
-//        givenStage.setScene(givenScene);
-//        GameBoardController.getInstance().linkCanvas(givenScene);
-//        givenStage.show();
-//    }
-
     public void setColorNumber(int colorNumber) {
         this.colorNumber = colorNumber;
-    }
-
-    public String listenForMessage() {
-        try {
-            // Listen for inputs and then pass them up
-            return this.input.readLine();
-        } catch (Exception e) {
-            System.out.println("Error: " + e.getMessage());
-            return  null;
-        }
     }
 
     public String getIpAddress() {
@@ -244,21 +197,6 @@ public class Client {
     public int getPortNumber() {
         return this.portNumber;
     }
-
-//    public Status disconnect() {
-//        try {
-//            // Close the connection
-//            this.input.close();
-//            this.output.close();
-//            this.socket.close();
-//            return Status.SUCCESS;
-//        } catch (Exception e) {
-//            System.out.println("Error: " + e.getMessage());
-//            return Status.FAILURE;
-//        }
-//    }
-
-
 
     public PrintWriter getOutput() {
         return this.output;
@@ -276,19 +214,6 @@ public class Client {
         return this.addressWithPort;
     }
 
-    // @Override
-    // public void run() {
-    //     try {
-    //         // listen for messages and pass them to the server
-    //         while (true) {
-    //             String message = this.Input.readLine();
-    //             this.Server.handleClientMessage(message, this);
-    //         }
-    //     } catch (Exception e) {
-    //         System.out.println("Error: " + e.getMessage());
-    //     }
-    // }
-
     public void setMsgSent(Boolean b) {
         this.msgSent = b;
     }
@@ -297,39 +222,4 @@ public class Client {
         return this.msgSent;
     }
 
-//    public class ClientThread implements Runnable {
-//
-//        private Client client;
-//
-//        public ClientThread(Client c) {
-//            this.client = c;
-//        }
-//
-//        public void run() {
-//            try {
-//                String serverMessage;
-//                while((serverMessage = client.getInput().readLine()) != null) {
-//                    switch (serverMessage) {
-//                        case "EXIT":
-//                            return;
-//                        case "MESSAGE":
-//                            System.out.println("\nIncoming: MESSAGE");
-//                            String message = client.getInput().readLine();
-//                            System.out.print(message);
-//                            // Scanner scanner = new Scanner(System.in);
-//                            message = sc.nextLine();
-//                            System.out.println("message: " + message + " length: " + message.length());
-//                            client.getOutput().println(message);
-//                            client.getOutput().flush();
-//                            break;
-//                        default:
-//                    }
-//                    System.out.println("\nSelect an option:\nEXIT\nMESSAGE");
-//                    System.out.print("Selection: ");
-//                }
-//            } catch(IOException e) {
-//                e.printStackTrace();
-//            }
-//        }
-//    }
 }

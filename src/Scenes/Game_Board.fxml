@@ -9,9 +9,9 @@
 
 <AnchorPane prefHeight="400.0" prefWidth="600.0" style="-fx-background-color: skyblue;" xmlns="http://javafx.com/javafx/20.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="GameBoardController">
    <children>
-      <Label layoutX="140.0" layoutY="6.0" style="-fx-background-color: lightyellow;" text="Conquer the blocks!!">
+      <Label fx:id="gameHeader" layoutX="36.0" layoutY="9.0" style="-fx-background-color: lightyellow;" text="Waiting for the others to ready up..">
          <font>
-            <Font name="Georgia Bold" size="30.0" />
+            <Font name="Georgia Bold" size="28.0" />
          </font>
       </Label>
       <Pane layoutX="28.0" layoutY="45.0" prefHeight="40.0" prefWidth="60.0" style="-fx-background-color: white;">
@@ -272,6 +272,6 @@
          <children>
             <Canvas id="7,7" fx:id="canvas1311111111111111111111111111111111111111111111111" height="40.0" onMouseDragged="#handleMouseDragged" onMouseReleased="#releasedDrag" width="60.0" />
          </children></Pane>
-      <Button layoutX="465.0" layoutY="11.0" mnemonicParsing="false" onAction="#switchToEndScreen" text="Finish Game" />
+      <Button layoutX="485.0" layoutY="12.0" mnemonicParsing="false" onAction="#switchToEndScreen" text="Finish Game" />
    </children>
 </AnchorPane>
