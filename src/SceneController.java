@@ -7,36 +7,35 @@ import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.image.Image;
 import javafx.stage.Stage;
-import javafx.scene.control.Label;
 
 import java.io.IOException;
-import java.net.Inet4Address;
-import java.net.UnknownHostException;
 
 public class SceneController {
     @FXML
-    private Stage stage;
-    private Scene scene;
-    private Parent root;
-    @FXML
-    private Label ipLabel;
+    private static volatile Stage stage;
+    private static volatile Scene scene;
+    private static volatile Parent root;
     @FXML
     private Button readyBtn;
-//    private ActionEvent reusableEvent;
 
-    public void initialize() {
-        System.out.println("Calling initialize..");
-        Client.getInstance().threadedListening();
+    public static SceneController object;
 
-        if (ipLabel != null) { //code for the waiting screen and not the main screen
-            try {
-                String ipAddress = Inet4Address.getLocalHost().getHostAddress();
-                ipLabel.setText("Your Host IP Address: " + ipAddress);
-            } catch (UnknownHostException e) {
-                e.printStackTrace();
-                ipLabel.setText("Unable to fetch IP address");
+    public SceneController() {
+    }
+
+    public static SceneController getInstance() {
+        if (object == null) {
+            synchronized (Client.class) {
+                if (object == null) {
+                    object = new SceneController();
+                }
             }
         }
+        return object;
+    }
+
+    public void initialize() {
+        Client.getInstance().threadedListening();
     }
 
     public void switchToMainPage(ActionEvent e) throws IOException {
@@ -49,32 +48,10 @@ public class SceneController {
         stage.show();
     }
 
-
-    public void switchToEndPage(ActionEvent e) throws IOException {
-        root = FXMLLoader.load(getClass().getResource("Scenes/End_Screen.fxml"));
-        stage = (Stage)((Node)e.getSource()).getScene().getWindow();
-        scene = new Scene(root);
-        Image icon = new Image("Scenes/garfield_deny.jpg");
-        stage.getIcons().add(icon);
-        stage.setScene(scene);
-        stage.show();
-    }
-
-    public void readyButtonPressed(ActionEvent e) throws IOException {
+    public synchronized void readyButtonPressed(ActionEvent e) throws IOException {
         readyBtn.setDisable(true);
         readyBtn.setText("Waiting");
-        Client.getInstance().sendMessage("READY");
 
-        //**
-//        reusableEvent = e;
-//        root = FXMLLoader.load(getClass().getResource("Scenes/Game_Board.fxml"));
-//        stage = (Stage)((Node)e.getSource()).getScene().getWindow();
-//        scene = new Scene(root);
-//        Client.getInstance().setGameBoardVars(root, stage, scene);
-
-    }
-
-    public void switchToGameBoard(ActionEvent e) throws IOException {
         root = FXMLLoader.load(getClass().getResource("Scenes/Game_Board.fxml"));
         stage = (Stage)((Node)e.getSource()).getScene().getWindow();
         scene = new Scene(root);
@@ -85,23 +62,5 @@ public class SceneController {
         stage.show();
     }
 
-    public void switchToJoinGame(ActionEvent e) throws  IOException {
-        root = FXMLLoader.load(getClass().getResource("Scenes/JoinGame.fxml"));
-        stage = (Stage)((Node)e.getSource()).getScene().getWindow();
-        scene = new Scene(root);
-        stage.setTitle("Join Game");
-        stage.setScene(scene);
-        stage.show();
-    }
-    //    public void switchToHostWaiting(ActionEvent e) throws IOException {
-//        root = FXMLLoader.load(getClass().getResource("Scenes/Host_Waiting_Screen.fxml"));
-//        stage = (Stage)((Node)e.getSource()).getScene().getWindow();
-//        scene = new Scene(root);
-//        Image icon = new Image("Scenes/garfield_deny.jpg");
-//        stage.getIcons().add(icon);
-//        stage.setTitle("Deny and Conquer: Waiting Room");
-//        stage.setScene(scene);
-//        stage.show();
-//    }
 
 }

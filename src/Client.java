@@ -22,6 +22,7 @@ public class Client {
     private Color color;
     private String ipAddress;
     private int portNumber;
+    private boolean gameStarted;
 //    private Scene givenScene;
 //    private Parent givenRoot;
 //    private Stage givenStage;
@@ -54,6 +55,7 @@ public class Client {
         this.is = socket.getInputStream();
         this.output = new PrintWriter(os, true);
         this.input = new BufferedReader(new InputStreamReader(is));
+        this.gameStarted = false;
     }
 
     public void sendMessage(String payload) {
@@ -90,7 +92,11 @@ public class Client {
                         case "START":
                             System.out.println("SERVER START");
 //                            this.switchToGameBoard();
-//                            SceneController.class.swi
+//                            SceneController.getInstance().switchToGameBoard2();
+                            gameStarted = true;
+//                            SceneController.getInstance().notify();
+//                            notify();
+                            GameBoardController.getInstance().letUserPlay();
                             break;
                         case "LOCK":
                             System.out.println("SERVER LOCK");
@@ -179,6 +185,10 @@ public class Client {
 
     public int getColorNumber() {
         return colorNumber;
+    }
+
+    public boolean isGameStarted() {
+        return gameStarted;
     }
 
     public Color getColorOf(int owner){
