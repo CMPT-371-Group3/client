@@ -4,17 +4,14 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
-import javafx.scene.control.Button;
 import javafx.scene.image.Image;
 import javafx.stage.Stage;
 
-//import java.awt.*;
-//join game
 import javafx.scene.control.TextField;
 import java.io.IOException;
-import java.io.OutputStream;
-import java.net.Socket;
 
+// Class that handles the Join Game page, takes the user input for the IP address
+// and the Port Number and notifies the server that the player has joined
 public class JoinGameController {
 
     @FXML
@@ -26,6 +23,7 @@ public class JoinGameController {
     private Scene scene;
     private Parent root;
 
+    // JavaFX code that switches the scene to the Main Page, linked to a button click event
     public void switchToMainPage(ActionEvent e) throws IOException {
         root = FXMLLoader.load(getClass().getResource("Scenes/Main.fxml"));
         stage = (Stage)((Node)e.getSource()).getScene().getWindow();

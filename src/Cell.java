@@ -1,6 +1,7 @@
 import javafx.scene.canvas.Canvas;
 import javafx.scene.paint.Color;
 
+// The Cell class handles all the operations and data of a single cell on the board
 public class Cell {
     private Canvas canvas;
     private Color color;
@@ -27,14 +28,6 @@ public class Cell {
         this.owner = owner;
     }
 
-    public void setCanvas(Canvas canvas) {
-        this.canvas = canvas;
-    }
-
-    public void setColor(Color color) {
-        this.color = color;
-    }
-
     public void setTakenOver(boolean takenOver) {
         isTakenOver = takenOver;
     }
@@ -43,20 +36,8 @@ public class Cell {
         return canvas;
     }
 
-    public Color getColor() {
-        return color;
-    }
-
     public boolean isTakenOver() {
         return isTakenOver;
-    }
-
-    public int getX() {
-        return x;
-    }
-
-    public int getY() {
-        return y;
     }
 
     public void setLocked(boolean locked) {

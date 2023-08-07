@@ -10,6 +10,7 @@ import javafx.stage.Stage;
 
 import java.io.IOException;
 
+// Deals with switching between some scenes and the Ready button
 public class SceneController {
     @FXML
     private static volatile Stage stage;
@@ -38,6 +39,7 @@ public class SceneController {
         Client.getInstance().threadedListening();
     }
 
+    // JavaFX code that switches the scene to the Main Page, linked to a button click event
     public void switchToMainPage(ActionEvent e) throws IOException {
         root = FXMLLoader.load(getClass().getResource("Scenes/Main.fxml"));
         stage = (Stage)((Node)e.getSource()).getScene().getWindow();
@@ -48,6 +50,7 @@ public class SceneController {
         stage.show();
     }
 
+    // JavaFX code that switches the scene to the Game page, linked to a button click event
     public synchronized void readyButtonPressed(ActionEvent e) throws IOException {
         readyBtn.setDisable(true);
         readyBtn.setText("Waiting");
