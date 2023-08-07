@@ -6,7 +6,6 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
-import javafx.scene.control.Label;
 import javafx.scene.image.Image;
 import javafx.scene.image.PixelReader;
 import javafx.scene.image.WritableImage;
@@ -16,6 +15,8 @@ import javafx.scene.input.MouseEvent;
 
 import java.io.IOException;
 
+// The GameBoardController handles the front-end game logic. Any game board updates from the other players
+// are reflected in the front-end using this class. This also holds the 2D array of Cells
 public class GameBoardController{
     @FXML
     private Parent root;
@@ -41,9 +42,12 @@ public class GameBoardController{
         return object;
     }
 
+    // Links every canvas in the scene to a Canvas object in the GameBoardController
     public void linkCanvas(Scene givenScene) {
         winner = -1;
         everyoneInGame = false;
+
+        // initializing all the Cells
         for (int x=0; x<8; x++) {
             for (int y=0; y<8; y++) {
                 scene = givenScene;
@@ -67,7 +71,6 @@ public class GameBoardController{
     public void lockCell(int x, int y, int owner) {
         cells[x][y].setLocked(true);
         cells[x][y].setOwner(owner);
-        System.out.println("lockCell method called-  " + x + " " + y + " is locked: " + cells[x][y].isLocked());
 
         Canvas c = cells[x][y].getCanvas();
         GraphicsContext gc = c.getGraphicsContext2D();
@@ -80,7 +83,6 @@ public class GameBoardController{
 
     public void unlockCell(int x, int y) {
         cells[x][y].setLocked(false);
-        System.out.println("unlocked " + x + " " + y + " is locked: " + cells[x][y].isLocked());
 
         Canvas c = cells[x][y].getCanvas();
         GraphicsContext gc = c.getGraphicsContext2D();
@@ -98,13 +100,16 @@ public class GameBoardController{
         gc.setFill(Client.getInstance().getColorOf(owner));
         gc.fillRect(0,0, c.getWidth(), c.getHeight());
     }
-
     // ***********************************************************************
+
+    //Deals with the actual drawing on the cells, displaying these changes and sending lock messages to the server
     @FXML
     private void handleMouseDragged(MouseEvent mouseEvent) {
         if(everyoneInGame) {
             Canvas currentCanvas = (Canvas) mouseEvent.getSource();
             String[] coordinates = currentCanvas.getId().split(",");
+
+            //identifying the cell that is currently being drawn in
             int x = Integer.parseInt(coordinates[0]);
             int y = Integer.parseInt(coordinates[1]);
 
@@ -149,6 +154,7 @@ public class GameBoardController{
         return percentage;
     }
 
+    // When a player releases their mouse after drawing, it checks how much they drew in and either locks or unlocks the cell
     public void releasedDrag(MouseEvent e) {
         if(everyoneInGame) {
             Canvas currentCanvas = (Canvas) e.getSource();
@@ -159,7 +165,6 @@ public class GameBoardController{
             int x = Integer.parseInt(coordinates[0]);
             int y = Integer.parseInt(coordinates[1]);
 
-            //**
             Cell currentCell = cells[x][y];
             if (!currentCell.isTakenOver()) {
                 if (!currentCell.isLocked() || currentCell.getOwner() == Client.getInstance().getColorNumber()) {
@@ -170,7 +175,6 @@ public class GameBoardController{
                         g.clearRect(0, 0, currentCanvas.getWidth(), currentCanvas.getHeight());
                     } else {
                         g.setFill(Client.getInstance().getColor());
-                        System.out.println("Fill color: " + Client.getInstance().getColor());
                         g.fillRect(0, 0, currentCanvas.getWidth(), currentCanvas.getHeight());
                         cells[x][y].setTakenOver(true);
                         String fillMsg = "FILL/" + x + "," + y;
@@ -179,22 +183,11 @@ public class GameBoardController{
                 }
             }
         }
-
     }
 
-    public void switchToMainPage(ActionEvent e) throws IOException {
-        root = FXMLLoader.load(getClass().getResource("Scenes/End_Screen.fxml"));
-        stage = (Stage)((Node)e.getSource()).getScene().getWindow();
-        scene = new Scene(root);
-        Image icon = new Image("Scenes/garfield_deny.jpg");
-        stage.getIcons().add(icon);
-        stage.setScene(scene);
-        stage.show();
-    }
-
+    // JavaFX code that switches the scene to the End Screen, linked to a button click event
     public void switchToEndScreen(ActionEvent e) throws IOException {
         if (winner != -1) {
-//            EndScreenController.getInstance().setWinner(winner);
             root = FXMLLoader.load(getClass().getResource("Scenes/End_Screen.fxml"));
             stage = (Stage)((Node)e.getSource()).getScene().getWindow();
             scene = new Scene(root);
@@ -214,26 +207,4 @@ public class GameBoardController{
         winner = newWinner;
         EndScreenController.getInstance().setWinner(newWinner);
     }
-
-//    @FXML
-//    public void switchToEndScreen2(int winner) throws IOException {
-//        FXMLLoader loader = new FXMLLoader(getClass().getResource("Scenes/End_Screen.fxml"));
-//        Parent newRoot = loader.load();
-//        stage = (Stage) scene.getWindow();
-//        scene = new Scene(newRoot);
-//        Image icon = new Image("Scenes/garfield_deny.jpg");
-//        stage.getIcons().add(icon);
-//        stage.setScene(scene);
-////        EndScreenController.getInstance().setWinner(winner);
-//        stage.show();
-////        EndScreenController.getInstance().setText();
-//
-////        FXMLLoader loader = new FXMLLoader(getClass().getResource("Scenes/End_Screen.fxml"));
-////        Parent newRoot;
-////        try {
-////            root = (Parent) loader.load();
-////            EndScreenController controller = (EndScreenController) loader.getController();
-////            controller.
-////        } catch (IOException e)
-//    }
 }

@@ -8,10 +8,10 @@ import javafx.stage.Stage;
 public class Main extends Application{
 
     public static void main(String[] args) {
-        System.out.println("Hello world");
         launch(args);
     }
 
+    // Overriding the start function for the JavaFX GUI
     @Override
     public void start(Stage stage) throws Exception {
         Parent root = FXMLLoader.load(getClass().getResource("Scenes/Main.fxml"));

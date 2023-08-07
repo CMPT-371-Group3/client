@@ -1,16 +1,12 @@
-import javafx.event.ActionEvent;
-import javafx.fxml.FXML;
-import javafx.fxml.FXMLLoader;
-import javafx.scene.Node;
-import javafx.scene.Parent;
-import javafx.scene.Scene;
-import javafx.scene.image.Image;
 import javafx.scene.paint.Color;
-import javafx.stage.Stage;
 
 import java.io.*;
 import java.net.Socket;
 
+
+// The Client class, handles opening the socket, sending the server messages, and receiving messages
+// from the server. Also opens another thread so that the client can listen for broadcast messages
+// coming from the other players.
 public class Client {
 
     private Socket socket;
@@ -23,11 +19,6 @@ public class Client {
     private String ipAddress;
     private int portNumber;
     private boolean gameStarted;
-
-    @FXML
-    private Stage stage;
-    private Scene scene;
-    private Parent root;
 
     public static Client object;
     private Client() {
@@ -65,17 +56,8 @@ public class Client {
         }
     }
 
-    public void switchToGameBoard(ActionEvent e) throws IOException {
-        //stop listening
-        root = FXMLLoader.load(getClass().getResource("Scenes/Game_Board.fxml"));
-        stage = (Stage)((Node)e.getSource()).getScene().getWindow();
-        scene = new Scene(root);
-        Image icon = new Image("Scenes/garfield_deny.jpg");
-        stage.getIcons().add(icon);
-        stage.setScene(scene);
-        stage.show();
-    }
-
+    //function that starts a new thread, starts listening to the server, and deals with the
+    // token-based messages
     public void threadedListening() {
         new Thread(()-> {
             try {
@@ -148,9 +130,6 @@ public class Client {
         }).start();
     }
 
-    private String addressWithPort;
-    private Boolean msgSent;
-
     public Color getColor() {
         return color;
     }
@@ -167,59 +146,13 @@ public class Client {
         return colorNumber;
     }
 
-    public boolean isGameStarted() {
-        return gameStarted;
-    }
-
     public Color getColorOf(int owner){
-        switch (owner) {
-            case 1:
-                return Color.RED;
-            case 2:
-                return Color.BLUE;
-            case 3:
-                return Color.GREEN;
-            case 4:
-                return Color.PURPLE;
-            default:
-                return Color.BLACK;
-        }
+        return switch (owner) {
+            case 1 -> Color.RED;
+            case 2 -> Color.BLUE;
+            case 3 -> Color.GREEN;
+            case 4 -> Color.PURPLE;
+            default -> Color.BLACK;
+        };
     }
-
-    public void setColorNumber(int colorNumber) {
-        this.colorNumber = colorNumber;
-    }
-
-    public String getIpAddress() {
-        return this.ipAddress;
-    }
-
-    public int getPortNumber() {
-        return this.portNumber;
-    }
-
-    public PrintWriter getOutput() {
-        return this.output;
-    }
-
-    public BufferedReader getInput() {
-        return this.input;
-    }
-
-    public void setAddressWithPort(String address) {
-        this.addressWithPort = address;
-    }
-
-    public String getAddressWithPort() {
-        return this.addressWithPort;
-    }
-
-    public void setMsgSent(Boolean b) {
-        this.msgSent = b;
-    }
-
-    public Boolean getMsgSent() {
-        return this.msgSent;
-    }
-
 }

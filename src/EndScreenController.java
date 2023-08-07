@@ -1,7 +1,8 @@
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
-import javafx.scene.paint.Color;
 
+// Class that handles the final screen when the game is over.
+// Displays the winner(s) of the game
 public class EndScreenController {
 
     public static EndScreenController object;
@@ -39,7 +40,6 @@ public class EndScreenController {
         if (multipleWinners) {
             String resultText = "There was a tie! The winners are: ";
             for (int winner: winnersArray) {
-                System.out.println("a winner in end screen: " + winner);
                 resultText += determineColor(winner);
                 resultText += ", ";
             }
