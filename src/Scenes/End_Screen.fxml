@@ -10,7 +10,7 @@
          <Font name="Georgia Bold" size="30.0" />
       </font>
    </Label>
-   <Label fx:id="winnerText" alignment="CENTER" contentDisplay="CENTER" layoutX="221.0" layoutY="154.0" text="Winner: ">
+   <Label fx:id="winnerText" alignment="CENTER" contentDisplay="CENTER" layoutX="97.0" layoutY="154.0" text="Winner: ">
       <font>
          <Font name="Georgia" size="20.0" />
       </font>
