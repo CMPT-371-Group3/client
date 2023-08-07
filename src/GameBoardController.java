@@ -21,7 +21,7 @@ public class GameBoardController{
     private Stage stage;
     private Scene scene;
     private static volatile int winner = -1;
-//    private Scene givenScene;
+    private static volatile boolean everyoneInGame;
 
     public static volatile Cell[][] cells = new Cell[8][8];
     public static GameBoardController object;
@@ -43,6 +43,7 @@ public class GameBoardController{
     public void linkCanvas(Scene givenScene) {
 //        System.out.println("IN the initialize function");
         this.winner = -1;
+        this.everyoneInGame = false;
         for (int x=0; x<8; x++) {
             for (int y=0; y<8; y++) {
                 scene = givenScene;
@@ -50,10 +51,15 @@ public class GameBoardController{
                 Canvas currentCanvas =  (Canvas) scene.lookup("#" + canvasID);
                 Cell cell = new Cell(currentCanvas, Color.TRANSPARENT, false, x, y, false);
                 cells[x][y] = cell;
-                System.out.println("BEFORE 47 " + cells[x][y].getCanvas().getHeight());
+//                System.out.println("BEFORE 47 " + cells[x][y].getCanvas().getHeight());
                 cells[x][y].getCanvas().setOnMouseDragged(this::handleMouseDragged);
             }
         }
+        Client.getInstance().sendMessage("READY");
+    }
+
+    public void letUserPlay(){
+        everyoneInGame = true;
     }
 
 
@@ -99,26 +105,29 @@ public class GameBoardController{
     // ***********************************************************************
     @FXML
     private void handleMouseDragged(MouseEvent mouseEvent) {
-        Canvas currentCanvas = (Canvas) mouseEvent.getSource();
-        String[] coordinates = currentCanvas.getId().split(",");
-        int x = Integer.parseInt(coordinates[0]);
-        int y = Integer.parseInt(coordinates[1]);
+        System.out.println("DRAGGING everyone in game: " + everyoneInGame);
+        if(everyoneInGame) {
+            Canvas currentCanvas = (Canvas) mouseEvent.getSource();
+            String[] coordinates = currentCanvas.getId().split(",");
+            int x = Integer.parseInt(coordinates[0]);
+            int y = Integer.parseInt(coordinates[1]);
 
-        Cell currentCell = cells[x][y];
+            Cell currentCell = cells[x][y];
 //        System.out.println("TAKEN OVER? " + x + " " + y + currentCell.isTakenOver());
-        if (!currentCell.isTakenOver()) {
-            if (!currentCell.isLocked()) {
-                currentCell.setLocked(true);
-                String lockMsg = "LOCK/" + x + "," + y;
-                Client.getInstance().sendMessage(lockMsg);
-            }
-            if (currentCell.getOwner() == Client.getInstance().getColorNumber()) {
-                GraphicsContext g = currentCanvas.getGraphicsContext2D();
-                double size = 5;
-                double xCoord = mouseEvent.getX() - size;
-                double yCoord = mouseEvent.getY() - size;
-                g.setFill(Client.getInstance().getColor());
-                g.fillRect(xCoord, yCoord, size, size);
+            if (!currentCell.isTakenOver()) {
+                if (!currentCell.isLocked()) {
+                    currentCell.setLocked(true);
+                    String lockMsg = "LOCK/" + x + "," + y;
+                    Client.getInstance().sendMessage(lockMsg);
+                }
+                if (currentCell.getOwner() == Client.getInstance().getColorNumber()) {
+                    GraphicsContext g = currentCanvas.getGraphicsContext2D();
+                    double size = 5;
+                    double xCoord = mouseEvent.getX() - size;
+                    double yCoord = mouseEvent.getY() - size;
+                    g.setFill(Client.getInstance().getColor());
+                    g.fillRect(xCoord, yCoord, size, size);
+                }
             }
         }
     }
@@ -147,31 +156,34 @@ public class GameBoardController{
     }
 
     public void releasedDrag(MouseEvent e) {
-        Canvas currentCanvas = (Canvas) e.getSource();
-        GraphicsContext g = currentCanvas.getGraphicsContext2D();
-        double percentageFilled = calculatePercentageDrawn(currentCanvas);
+        System.out.println("Everyone in game: " + everyoneInGame);
+        if(everyoneInGame) {
+            Canvas currentCanvas = (Canvas) e.getSource();
+            GraphicsContext g = currentCanvas.getGraphicsContext2D();
+            double percentageFilled = calculatePercentageDrawn(currentCanvas);
 
-        String[] coordinates = currentCanvas.getId().split(",");
-        int x = Integer.parseInt(coordinates[0]);
-        int y = Integer.parseInt(coordinates[1]);
+            String[] coordinates = currentCanvas.getId().split(",");
+            int x = Integer.parseInt(coordinates[0]);
+            int y = Integer.parseInt(coordinates[1]);
 
-        //**
-        Cell currentCell = cells[x][y];
-        if (!currentCell.isTakenOver()) {
-            if (!currentCell.isLocked() || currentCell.getOwner()==Client.getInstance().getColorNumber()) {
-                if (percentageFilled < 50) {
-                    String unlockMsg = "UNLOCK/" + x + "," + y;
-                    Client.getInstance().sendMessage(unlockMsg);
-                    cells[x][y].setLocked(false);
-                    g.clearRect(0, 0, currentCanvas.getWidth(), currentCanvas.getHeight());
-                } else {
+            //**
+            Cell currentCell = cells[x][y];
+            if (!currentCell.isTakenOver()) {
+                if (!currentCell.isLocked() || currentCell.getOwner() == Client.getInstance().getColorNumber()) {
+                    if (percentageFilled < 50) {
+                        String unlockMsg = "UNLOCK/" + x + "," + y;
+                        Client.getInstance().sendMessage(unlockMsg);
+                        cells[x][y].setLocked(false);
+                        g.clearRect(0, 0, currentCanvas.getWidth(), currentCanvas.getHeight());
+                    } else {
 //            g.setFill(Color.CORAL); // we can set this to the user's color later, for testing purposes it's black
-                    g.setFill(Client.getInstance().getColor());
-                    System.out.println("Fill color: " + Client.getInstance().getColor());
-                    g.fillRect(0, 0, currentCanvas.getWidth(), currentCanvas.getHeight());
-                    cells[x][y].setTakenOver(true);
-                    String fillMsg = "FILL/" + x + "," + y;
-                    Client.getInstance().sendMessage(fillMsg);
+                        g.setFill(Client.getInstance().getColor());
+                        System.out.println("Fill color: " + Client.getInstance().getColor());
+                        g.fillRect(0, 0, currentCanvas.getWidth(), currentCanvas.getHeight());
+                        cells[x][y].setTakenOver(true);
+                        String fillMsg = "FILL/" + x + "," + y;
+                        Client.getInstance().sendMessage(fillMsg);
+                    }
                 }
             }
         }

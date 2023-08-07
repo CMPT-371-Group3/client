@@ -46,6 +46,7 @@ public class JoinGameController {
         Client.getInstance().makeConnection();
         Client.getInstance().sendMessage("JOIN");
 
+        SceneController.getInstance();
         root = FXMLLoader.load(getClass().getResource("Scenes/Host_Waiting_Screen.fxml"));
         stage = (Stage)((Node)e.getSource()).getScene().getWindow();
         scene = new Scene(root);
